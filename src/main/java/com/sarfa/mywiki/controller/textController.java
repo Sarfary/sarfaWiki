@@ -1,7 +1,12 @@
 package com.sarfa.mywiki.controller;
 
+import com.sarfa.mywiki.domain.Test;
+import com.sarfa.mywiki.service.TestService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class textController {
@@ -17,6 +22,14 @@ public class textController {
     @PostMapping("/hello/post")
     public String helloPost(String name){
         return "hello " + name;
+    }
+
+    //测试MyBatis
+    @Resource
+    private TestService testService;
+    @GetMapping("/test")
+    public List<Test> list(){
+        return testService.list();
     }
       /*
     restful风格请求：

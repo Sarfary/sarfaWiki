@@ -6,6 +6,7 @@ create table `test`(
     primary key (`id`)
 )engine innodb default charset=utf8mb4 comment='测试';
 
+insert into `test` (id, name, password) values (1, '测试', 'password');
 
 -- # 电子书表
 -- drop table if exists `ebook`;
