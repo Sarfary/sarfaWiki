@@ -8,6 +8,10 @@ public class textController {
     public String hello(){
         return "Hello Sarfa!!";
     }
+    @PostMapping("/hello/post")
+    public String helloPost(String name){
+        return "hello " + name;
+    }
       /*
     restful风格请求：
     原本样式：/user/id=1

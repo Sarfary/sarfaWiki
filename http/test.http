@@ -1,0 +1,11 @@
+POST http://localhost:8888/hello/post
+Content-Type: application/x-www-form-urlencoded
+
+name=Sarfa
+
+###
+
+GET http://localhost:8888/hello
+
+
+###
