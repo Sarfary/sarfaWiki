@@ -1,12 +1,18 @@
 package com.sarfa.mywiki.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class textController {
+//    自定义配置的使用，当没有这个配置的时候就会使用：后的提前设定的值
+    @Value("${test.hello:Test}")
+    private String myName;
+
     @RequestMapping("/hello")
     public String hello(){
-        return "Hello Sarfa!!";
+
+        return "Hello " + myName;
     }
     @PostMapping("/hello/post")
     public String helloPost(String name){
