@@ -28,6 +28,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--1.添加集成热部署的依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <!--2.勾选设置中编译器的自动构建项目-->
+        <!--3.勾选设置中的高级设置下的编译器的自动make-->
+
     </dependencies>
 
     <build>
