@@ -1,7 +1,7 @@
 package com.sarfa.mywiki.controller;
 
-import com.sarfa.mywiki.domain.Demo;
-import com.sarfa.mywiki.service.DemoService;
+import com.sarfa.mywiki.domain.Ebook;
+import com.sarfa.mywiki.service.EbookService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,15 +10,15 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/demo")
-public class DemoController {
+@RequestMapping("/ebook")
+public class EbookController {
 
     //测试MyBatis
     @Resource
-    private DemoService demoService;
+    private EbookService ebookService;
     @GetMapping("/list")
-    public List<Demo> list(){
-        return demoService.list();
+    public List<Ebook> list(){
+        return ebookService.list();
     }
     
 }
