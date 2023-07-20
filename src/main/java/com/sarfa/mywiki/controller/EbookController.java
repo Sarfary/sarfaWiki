@@ -1,6 +1,7 @@
 package com.sarfa.mywiki.controller;
 
 import com.sarfa.mywiki.domain.Ebook;
+import com.sarfa.mywiki.resp.CommonResp;
 import com.sarfa.mywiki.service.EbookService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,11 @@ public class EbookController {
     @Resource
     private EbookService ebookService;
     @GetMapping("/list")
-    public List<Ebook> list(){
-        return ebookService.list();
+    public CommonResp<List<Ebook>> list(){
+        CommonResp<List<Ebook>> objectCommonResp = new CommonResp<>();
+        List<Ebook> list= ebookService.list();
+        objectCommonResp.setContent(list);
+        return objectCommonResp;
     }
     
 }
