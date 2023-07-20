@@ -1,1 +1,1 @@
-GET http://localhost:8888/ebook/list?name=Mysql
+GET http://localhost:8888/ebook/list?name=Oracle

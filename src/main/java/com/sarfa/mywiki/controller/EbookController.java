@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/ebook")
 public class EbookController {
 
-    //测试MyBatis
     @Resource
     private EbookService ebookService;
     @GetMapping("/list")
