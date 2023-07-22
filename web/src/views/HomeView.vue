@@ -48,7 +48,7 @@
           </a-menu>
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-          Content
+          <pre>{{ebooks}}</pre>
         </a-layout-content>
       </a-layout>
     </a-layout-content>
@@ -56,19 +56,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent ,onMounted, ref} from 'vue';
 import axios from "axios";
+
 export default defineComponent({
   name: 'HomeView',
-  components: {
-  },
-  setup(){
+  components: {},
+  setup() {
     console.log("setup");
-    axios.get("http://localhost:8888/ebook/list?name=Oracle").then(
-        res=>{
-          console.log(res);
-        }
-    )
+    const ebooks = ref();
+    // 生命周期函数
+    onMounted(() => {
+      console.log("onMounted");
+      axios.get("http://localhost:8888/ebook/list?name=o").then(
+          res => {
+            console.log(res);
+            ebooks.value = res.data.content;
+          }
+      );
+    })
+
+    return{
+      ebooks
+    }
+
   }
 });
 </script>
