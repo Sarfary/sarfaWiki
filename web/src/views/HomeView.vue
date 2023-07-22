@@ -48,37 +48,25 @@
           </a-menu>
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-          <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
-            <template #footer>
-              <div>
-                <b>ant design vue</b>
-                footer part
-              </div>
-            </template>
+          <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"
+                  :pagination="pagination" :data-source="ebooks">
             <template #renderItem="{ item }">
-              <a-list-item key="item.title">
+              <a-list-item key="item.name">
                 <template #actions>
-          <span v-for="{ icon, text } in actions" :key="icon">
-            <component :is="icon" style="margin-right: 8px"/>
-            {{ text }}
-          </span>
-                </template>
-                <template #extra>
-                  <img
-                      width="272"
-                      alt="logo"
-                      src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                  />
+                  <span v-for="{ icon, text } in actions" :key="icon">
+                    <component :is="icon" style="margin-right: 8px"/>
+                    {{ text }}
+                  </span>
                 </template>
                 <a-list-item-meta :description="item.description">
                   <template #title>
-                    <a :href="item.href">{{ item.title }}</a>
+                    <a :href="item.href">{{ item.name}}</a>
                   </template>
                   <template #avatar>
-                    <a-avatar :src="item.avatar"/>
+                    <a-avatar :src="item.avatar" shape="square" :size="100"/>
                   </template>
                 </a-list-item-meta>
-                {{ item.content }}
+
               </a-list-item>
             </template>
           </a-list>
@@ -87,59 +75,44 @@
     </a-layout-content>
   </a-layout>
 </template>
-<script lang="ts" setup>
-import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
-
-const listData: Record<string, string>[] = [];
-
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://www.antdv.com/',
-    title: `ant design vue part ${i}`,
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    description:
-        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-  });
-}
-
-const pagination = {
-  onChange: (page: number) => {
-    console.log(page);
-  },
-  pageSize: 3,
-};
-const actions: Record<string, any>[] = [
-  {icon: StarOutlined, text: '156'},
-  {icon: LikeOutlined, text: '156'},
-  {icon: MessageOutlined, text: '2'},
-];
-</script>
 
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
-
+import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
 export default defineComponent({
   name: 'HomeView',
   components: {},
   setup() {
     console.log("setup");
+    //分页
+    const pagination = {
+      onChange: (page: number) => {
+        console.log(page);
+      },
+      pageSize: 12,
+    };
+    const actions: Record<string, any>[] = [
+      {icon: StarOutlined, text: '156'},
+      {icon: LikeOutlined, text: '156'},
+      {icon: MessageOutlined, text: '2'},
+    ];
     const ebooks = ref();
     // 生命周期函数
     onMounted(() => {
       console.log("onMounted");
-      axios.get("http://localhost:8888/ebook/list?name=o").then(
+      axios.get("http://localhost:8888/ebook/list").then(
           res => {
             console.log(res);
             ebooks.value = res.data.content;
           }
       );
-    })
+    });
 
     return {
-      ebooks
+      ebooks,
+      pagination,
+      actions
     }
 
   }
