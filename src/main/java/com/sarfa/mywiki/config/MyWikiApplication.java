@@ -1,14 +1,16 @@
-package com.sarfa.mywiki;
+package com.sarfa.mywiki.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 @MapperScan("com.sarfa.mywiki.mapper")
+@ComponentScan("com.sarfa.mywiki")
 public class MyWikiApplication {
     private static final Logger LOG = LoggerFactory.getLogger(MyWikiApplication.class);
 
