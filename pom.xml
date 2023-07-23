@@ -52,6 +52,19 @@
             <version>8.0.25</version>  <!-- 请检查你的MySQL驱动版本并更改相应的版本号 -->
         </dependency>
 
+        <!-- 配置 AOP  -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- 配置 fastjson  -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.70</version>
+        </dependency>
+
 
     </dependencies>
 
