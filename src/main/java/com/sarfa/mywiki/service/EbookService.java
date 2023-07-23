@@ -1,10 +1,13 @@
 package com.sarfa.mywiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sarfa.mywiki.domain.Ebook;
 import com.sarfa.mywiki.domain.EbookExample;
 import com.sarfa.mywiki.mapper.EbookMapper;
 import com.sarfa.mywiki.req.EbookReq;
 import com.sarfa.mywiki.resp.EbookResp;
+import com.sarfa.mywiki.resp.PageResp;
 import com.sarfa.mywiki.util.CopyUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -18,13 +21,21 @@ public class EbookService {
 
     @Resource//这个是jdk自带的
     private EbookMapper ebookMapper;
-    public List<EbookResp> list(EbookReq req){
+    public PageResp<EbookResp> list(EbookReq req){
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(req.getName())){
             criteria.andNameLike("%"+req.getName()+"%");
         }
+        if(!ObjectUtils.isEmpty((req.getPage()))|!ObjectUtils.isEmpty(req.getSize())){
+            PageHelper.startPage(req.getPage(), req.getSize());
+        }
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
+        PageResp<EbookResp> objectPageResp = new PageResp<EbookResp>();
+        objectPageResp.setTotal(pageInfo.getTotal());
+        objectPageResp.setList(list);
 //        List<EbookResp> respList = new ArrayList<>();
 //        for (Ebook ebook:ebookList) {
 ////            EbookResp ebookResp = new EbookResp();
@@ -34,7 +45,7 @@ public class EbookService {
 //            respList.add(ebookResp);
 //        }
         //列表复制
-        return CopyUtil.copyList(ebookList, EbookResp.class);
+        return objectPageResp;
 
     }
 
