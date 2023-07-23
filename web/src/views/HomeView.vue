@@ -60,7 +60,7 @@
                 </template>
                 <a-list-item-meta :description="item.description">
                   <template #title>
-                    <a :href="item.href">{{ item.name}}</a>
+                    <a :href="item.href">{{ item.name }}</a>
                   </template>
                   <template #avatar>
                     <a-avatar :src="item.avatar" shape="square" :size="100"/>
@@ -80,6 +80,7 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
+
 export default defineComponent({
   name: 'HomeView',
   components: {},
@@ -101,14 +102,13 @@ export default defineComponent({
     // 生命周期函数
     onMounted(() => {
       console.log("onMounted");
-      axios.get("http://localhost:8888/ebook/list").then(
+      axios.get("/ebook/list").then(
           res => {
             console.log(res);
             ebooks.value = res.data.content;
           }
       );
     });
-
     return {
       ebooks,
       pagination,
