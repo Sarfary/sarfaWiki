@@ -2,6 +2,7 @@ package com.sarfa.mywiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.sarfa.mywiki.aspect.LogAspect;
 import com.sarfa.mywiki.domain.Ebook;
 import com.sarfa.mywiki.domain.EbookExample;
 import com.sarfa.mywiki.mapper.EbookMapper;
@@ -10,6 +11,9 @@ import com.sarfa.mywiki.req.EbookSaveReq;
 import com.sarfa.mywiki.resp.EbookQueryResp;
 import com.sarfa.mywiki.resp.PageResp;
 import com.sarfa.mywiki.util.CopyUtil;
+import com.sarfa.mywiki.util.SnowFlake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -18,17 +22,19 @@ import java.util.List;
 
 @Service
 public class EbookService {
-//    @Autowired 也可以用这个来注入，这个是springboot自带的
-
+    //    @Autowired 也可以用这个来注入，这个是springboot自带的
+    //打印日志
+    private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
     @Resource//这个是jdk自带的
     private EbookMapper ebookMapper;
-    public PageResp<EbookQueryResp> list(EbookQueryReq req){
+
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
-        if(!ObjectUtils.isEmpty(req.getName())){
-            criteria.andNameLike("%"+req.getName()+"%");
+        if (!ObjectUtils.isEmpty(req.getName())) {
+            criteria.andNameLike("%" + req.getName() + "%");
         }
-        if(!ObjectUtils.isEmpty((req.getPage()))|!ObjectUtils.isEmpty(req.getSize())){
+        if (!ObjectUtils.isEmpty((req.getPage())) | !ObjectUtils.isEmpty(req.getSize())) {
             PageHelper.startPage(req.getPage(), req.getSize());
         }
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
@@ -50,17 +56,23 @@ public class EbookService {
 
     }
 
+    @Resource
+    private SnowFlake snowFlake;
 
-    public void save(EbookSaveReq req){
-        Ebook ebook = new Ebook();
-        ebook = CopyUtil.copy(req,Ebook.class);
-        if(ObjectUtils.isEmpty(ebook.getId())){
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if (ObjectUtils.isEmpty(ebook.getId())) {
             //id为空，是新增
+            ebook.setId(snowFlake.nextId());
+            ebook.setDocCount(0);
+            ebook.setViewCount(0);
+            ebook.setVoteCount(0);
             ebookMapper.insert(ebook);
-        }
-        else {
+        } else {
             //id不为空，是更新
-            ebookMapper.updateByPrimaryKey(ebook);
+            int a = ebookMapper.updateByPrimaryKey(ebook);
+            LOG.info("{}",a);
+
         }
 
     }

@@ -1,6 +1,13 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
     <a-layout-content style="padding: 24px 0; background: #fff">
+
+      <p>
+        <a-button type="primary" @click="add" style="margin-left:20px " >
+          新增
+        </a-button>
+      </p>
+
       <a-table
           :columns="columns"
           :data-source="ebooks"
@@ -15,7 +22,7 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-            <a-button type="primary" @click="showModal(record)">
+            <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
             <a-button danger block>
@@ -114,30 +121,16 @@ export default defineComponent({
     const open = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
 
-    const showModal = (record : any) => {
+    const edit = (record : any) => {
       open.value = true;
       ebook.value = record;
     };
+    const add = () => {
+      open.value = true;
+      ebook.value = {};
+    }
 
-    const handleOk = () => {
-      confirmLoading.value = true;
-      axios.post("/ebook/save",ebook.value).then(
-          (response)=>{
-            const data = response.data;
-            if(data.success){
-              open.value = false;
-              confirmLoading.value = false;
 
-              //重新加载页面
-              handleQuery({
-                page: pagination.value.current,
-                size: pagination.value.pageSize
-              });
-            }
-          }
-      )
-
-    };
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
@@ -151,7 +144,7 @@ export default defineComponent({
         const data = response.data;
         ebooks.value = data.content.list;
         //重置分页按钮
-        pagination.value.current = params.pages;
+        pagination.value.current = params.page;
         pagination.value.total = data.content.total;
       });
     };
@@ -161,6 +154,25 @@ export default defineComponent({
         page: pagination.current,
         size: pagination.pageSize
       });
+    };
+    const handleOk = () => {
+      confirmLoading.value = true;
+      axios.post("/ebook/save",ebook.value).then(
+          (response)=>{
+            const data = response.data;
+            if(data.success){
+              open.value = false;
+              confirmLoading.value = false;
+              console.log(pagination.value);
+              //重新加载页面
+              handleQuery({
+                page: pagination.value.current,
+                size: pagination.value.pageSize
+              });
+            }
+          }
+      )
+
     };
 
     onMounted(() => {
@@ -180,7 +192,8 @@ export default defineComponent({
       open,
       ebook,
       handleTableChange,
-      showModal,
+      edit,
+      add,
       handleOk
 
 
