@@ -87,12 +87,11 @@ export default defineComponent({
       },
       {
         title: '分类一',
-        key: 'category1Id',
         dataIndex: 'category1Id',
       },
       {
         title: '分类二',
-        key: 'category2Id',
+        dataIndex: 'category2Id',
       },
       {
         title: '文档数',
@@ -122,10 +121,22 @@ export default defineComponent({
 
     const handleOk = () => {
       confirmLoading.value = true;
-      setTimeout(() => {
-        open.value = false;
-        confirmLoading.value = false;
-      }, 1000);
+      axios.post("/ebook/save",ebook.value).then(
+          (response)=>{
+            const data = response.data;
+            if(data.success){
+              open.value = false;
+              confirmLoading.value = false;
+
+              //重新加载页面
+              handleQuery({
+                page: pagination.value.current,
+                size: pagination.value.pageSize
+              });
+            }
+          }
+      )
+
     };
     // 数据查询
     const handleQuery = (params: any) => {

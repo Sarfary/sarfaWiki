@@ -1,6 +1,6 @@
-package com.sarfa.mywiki.resp;
+package com.sarfa.mywiki.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;

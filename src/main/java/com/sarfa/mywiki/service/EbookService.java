@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.sarfa.mywiki.domain.Ebook;
 import com.sarfa.mywiki.domain.EbookExample;
 import com.sarfa.mywiki.mapper.EbookMapper;
-import com.sarfa.mywiki.req.EbookReq;
-import com.sarfa.mywiki.resp.EbookResp;
+import com.sarfa.mywiki.req.EbookQueryReq;
+import com.sarfa.mywiki.req.EbookSaveReq;
+import com.sarfa.mywiki.resp.EbookQueryResp;
 import com.sarfa.mywiki.resp.PageResp;
 import com.sarfa.mywiki.util.CopyUtil;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class EbookService {
 
     @Resource//这个是jdk自带的
     private EbookMapper ebookMapper;
-    public PageResp<EbookResp> list(EbookReq req){
+    public PageResp<EbookQueryResp> list(EbookQueryReq req){
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(req.getName())){
@@ -31,9 +32,9 @@ public class EbookService {
             PageHelper.startPage(req.getPage(), req.getSize());
         }
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
-        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
-        PageResp<EbookResp> objectPageResp = new PageResp<EbookResp>();
+        PageResp<EbookQueryResp> objectPageResp = new PageResp<EbookQueryResp>();
         objectPageResp.setTotal(pageInfo.getTotal());
         objectPageResp.setList(list);
 //        List<EbookResp> respList = new ArrayList<>();
@@ -46,6 +47,21 @@ public class EbookService {
 //        }
         //列表复制
         return objectPageResp;
+
+    }
+
+
+    public void save(EbookSaveReq req){
+        Ebook ebook = new Ebook();
+        ebook = CopyUtil.copy(req,Ebook.class);
+        if(ObjectUtils.isEmpty(ebook.getId())){
+            //id为空，是新增
+            ebookMapper.insert(ebook);
+        }
+        else {
+            //id不为空，是更新
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
 
     }
 
