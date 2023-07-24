@@ -15,7 +15,7 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-            <a-button type="primary">
+            <a-button type="primary" @click="showModal(record)">
               编辑
             </a-button>
             <a-button danger block>
@@ -26,6 +26,38 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+
+  <a-modal v-model:open="open" title="电子书" :confirm-loading="confirmLoading" @ok="handleOk">
+    <a-form
+        :model="ebooks"
+        name="basic"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 18 }"
+        autocomplete="on"
+    >
+      <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
+      <a-form-item label=封面>
+        <a-input v-model:value="ebook.cover" />
+      </a-form-item>
+
+      <a-form-item label=名称>
+        <a-input v-model:value="ebook.name" />
+      </a-form-item>
+
+      <a-form-item label=分类一>
+        <a-input v-model:value="ebook.category1Id" />
+      </a-form-item>
+
+      <a-form-item label=分类二>
+        <a-input v-model:value="ebook.category2Id" />
+      </a-form-item>
+
+      <a-form-item label=描述>
+        <a-input v-model:value="ebook.description" />
+      </a-form-item>
+
+    </a-form>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -36,6 +68,7 @@ export default defineComponent({
   name: 'AdminEbook',
   setup() {
     const ebooks = ref();
+    const ebook = ref();
     const pagination = ref({
       current: 1,
       pageSize: 4,
@@ -79,6 +112,21 @@ export default defineComponent({
         slots: {customRender: 'action'}
       }
     ];
+    const open = ref<boolean>(false);
+    const confirmLoading = ref<boolean>(false);
+
+    const showModal = (record : any) => {
+      open.value = true;
+      ebook.value = record;
+    };
+
+    const handleOk = () => {
+      confirmLoading.value = true;
+      setTimeout(() => {
+        open.value = false;
+        confirmLoading.value = false;
+      }, 1000);
+    };
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
@@ -117,7 +165,14 @@ export default defineComponent({
       pagination,
       columns,
       loading,
-      handleTableChange
+      confirmLoading,
+      open,
+      ebook,
+      handleTableChange,
+      showModal,
+      handleOk
+
+
     }
 
   }
