@@ -71,10 +71,14 @@ public class EbookService {
         } else {
             //id不为空，是更新
             int a = ebookMapper.updateByPrimaryKey(ebook);
-            LOG.info("{}",a);
+            //显示是否执行
+            // LOG.info("{}",a);
 
         }
 
+    }
+    public void delete(Long id){
+        ebookMapper.deleteByPrimaryKey(id);
     }
 
 }

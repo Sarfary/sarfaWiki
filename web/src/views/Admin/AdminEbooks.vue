@@ -3,7 +3,7 @@
     <a-layout-content style="padding: 24px 0; background: #fff">
 
       <p>
-        <a-button type="primary" @click="add" style="margin-left:20px " >
+        <a-button type="primary" @click="add" style="margin-left:20px ">
           新增
         </a-button>
       </p>
@@ -17,17 +17,22 @@
           @change="handleTableChange"
       >
         <template #cover="{ text:cover }">
-          <img  class = "img" v-if="cover" :src="cover" alt="avatar"/>
+          <img class="img" v-if="cover" :src="cover" alt="avatar"/>
         </template>
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-            <a-button type="primary" @click="edit(record)">
-              编辑
-            </a-button>
-            <a-button danger block>
-              删除
-            </a-button>
+            <a-button type="primary" @click="edit(record)">编辑</a-button>
+            <a-popconfirm
+                title="Are you sure delete this ebook?"
+                ok-text="Yes"
+                cancel-text="No"
+                @confirm="DeleteEbook(record.id)"
+                >
+              <a-button danger block>删除</a-button>
+
+            </a-popconfirm>
+
           </a-space>
         </template>
       </a-table>
@@ -44,23 +49,23 @@
     >
       <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
       <a-form-item label=封面>
-        <a-input v-model:value="ebook.cover" />
+        <a-input v-model:value="ebook.cover"/>
       </a-form-item>
 
       <a-form-item label=名称>
-        <a-input v-model:value="ebook.name" />
+        <a-input v-model:value="ebook.name"/>
       </a-form-item>
 
       <a-form-item label=分类一>
-        <a-input v-model:value="ebook.category1Id" />
+        <a-input v-model:value="ebook.category1Id"/>
       </a-form-item>
 
       <a-form-item label=分类二>
-        <a-input v-model:value="ebook.category2Id" />
+        <a-input v-model:value="ebook.category2Id"/>
       </a-form-item>
 
       <a-form-item label=描述>
-        <a-input v-model:value="ebook.description" />
+        <a-input v-model:value="ebook.description"/>
       </a-form-item>
 
     </a-form>
@@ -121,7 +126,7 @@ export default defineComponent({
     const open = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
 
-    const edit = (record : any) => {
+    const edit = (record: any) => {
       open.value = true;
       ebook.value = record;
     };
@@ -135,9 +140,9 @@ export default defineComponent({
     const handleQuery = (params: any) => {
       loading.value = true;
       axios.get("/ebook/list", {
-        params:{
-          page:params.page,
-          size:params.size
+        params: {
+          page: params.page,
+          size: params.size
         }
       }).then((response) => {
         loading.value = false;
@@ -157,13 +162,12 @@ export default defineComponent({
     };
     const handleOk = () => {
       confirmLoading.value = true;
-      axios.post("/ebook/save",ebook.value).then(
-          (response)=>{
+      axios.post("/ebook/save", ebook.value).then(
+          (response) => {
             const data = response.data;
-            if(data.success){
+            if (data.success) {
               open.value = false;
               confirmLoading.value = false;
-              console.log(pagination.value);
               //重新加载页面
               handleQuery({
                 page: pagination.value.current,
@@ -174,11 +178,23 @@ export default defineComponent({
       )
 
     };
+    const DeleteEbook = (id : number) => {
+      axios.delete("/ebook/delete/"+id).then((response)=>{
+        const data = response.data;
+        if (data.success){
+          //重新加载页面
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        }
+      })
+    }
 
     onMounted(() => {
       handleQuery({
-        page:pagination.value.current,
-        size:pagination.value.pageSize
+        page: pagination.value.current,
+        size: pagination.value.pageSize
 
       });
     })
@@ -194,7 +210,8 @@ export default defineComponent({
       handleTableChange,
       edit,
       add,
-      handleOk
+      handleOk,
+      DeleteEbook
 
 
     }
