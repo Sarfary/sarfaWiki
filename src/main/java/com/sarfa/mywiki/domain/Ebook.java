@@ -1,6 +1,17 @@
 package com.sarfa.mywiki.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.sarfa.mywiki.helper.LongJsonDeserializer;
+import com.sarfa.mywiki.helper.LongJsonSerializer;
+
 public class Ebook {
+    /**
+     * id
+     */
+
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     private String name;
