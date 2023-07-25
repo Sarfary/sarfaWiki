@@ -1,12 +1,24 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
     <a-layout-content style="padding: 24px 0; background: #fff">
-
-      <p>
+      <div class="addAndSearch">
         <a-button type="primary" @click="add" style="margin-left:20px ">
           新增
         </a-button>
-      </p>
+
+        <a-form
+            layout="inline"
+            :model="keyword"
+            class="searchKeyword"
+        >
+          <a-form-item>
+            <a-input v-model:value="keyword" placeholder="请输入需要查询的书名"></a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="search">搜索</a-button>
+          </a-form-item>
+        </a-form>
+      </div>
 
       <a-table
           :columns="columns"
@@ -28,7 +40,7 @@
                 ok-text="Yes"
                 cancel-text="No"
                 @confirm="DeleteEbook(record.id)"
-                >
+            >
               <a-button danger block>删除</a-button>
 
             </a-popconfirm>
@@ -76,11 +88,13 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
+
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
     const ebooks = ref();
     const ebook = ref();
+    const keyword = ref();
     const pagination = ref({
       current: 1,
       pageSize: 4,
@@ -134,16 +148,22 @@ export default defineComponent({
       open.value = true;
       ebook.value = {};
     }
+    const search = ()=> {
+        handleQuery(
+            {
+              name:keyword.value,
+              page: 1,
+              size: pagination.value.pageSize
+            }
+        )
+    }
 
 
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
       axios.get("/ebook/list", {
-        params: {
-          page: params.page,
-          size: params.size
-        }
+        params:params
       }).then((response) => {
         loading.value = false;
         const data = response.data;
@@ -173,8 +193,7 @@ export default defineComponent({
                 page: pagination.value.current,
                 size: pagination.value.pageSize
               });
-            }
-            else {
+            } else {
               confirmLoading.value = false;
               message.error(data.message);
             }
@@ -182,10 +201,10 @@ export default defineComponent({
       )
 
     };
-    const DeleteEbook = (id : number) => {
-      axios.delete("/ebook/delete/"+id).then((response)=>{
+    const DeleteEbook = (id: number) => {
+      axios.delete("/ebook/delete/" + id).then((response) => {
         const data = response.data;
-        if (data.success){
+        if (data.success) {
           //重新加载页面
           handleQuery({
             page: pagination.value.current,
@@ -211,9 +230,11 @@ export default defineComponent({
       confirmLoading,
       open,
       ebook,
+      keyword,
       handleTableChange,
       edit,
       add,
+      search,
       handleOk,
       DeleteEbook
 
@@ -230,5 +251,12 @@ export default defineComponent({
   width: 100px;
   vertical-align: middle;
   border-style: none;
+}
+.addAndSearch{
+  margin-bottom: 20px;
+}
+.searchKeyword {
+  display: flex;
+  float: right;
 }
 </style>
