@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sarfa.mywiki.helper.LongJsonDeserializer;
 import com.sarfa.mywiki.helper.LongJsonSerializer;
 
+import javax.validation.constraints.NotNull;
+
 public class EbookSaveReq {
     /**
      * id
@@ -13,6 +15,7 @@ public class EbookSaveReq {
     @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
+    @NotNull(message = "名称不能为空")
     private String name;
 
     private Long category1Id;

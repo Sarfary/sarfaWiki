@@ -80,6 +80,7 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
+import {message} from "ant-design-vue";
 
 export default defineComponent({
   name: 'HomeView',
@@ -87,12 +88,11 @@ export default defineComponent({
   setup() {
     console.log("setup");
     //分页
-    const pagination = {
-      onChange: (page: number) => {
-        console.log(page);
-      },
+    const pagination = ref({
+      current: 1,
       pageSize: 12,
-    };
+      total: 0
+    });
     const actions: Record<string, any>[] = [
       {icon: StarOutlined, text: '156'},
       {icon: LikeOutlined, text: '156'},
@@ -102,10 +102,22 @@ export default defineComponent({
     // 生命周期函数
     onMounted(() => {
       console.log("onMounted");
-      axios.get("/ebook/list").then(
+      axios.get("/ebook/list",{
+        params:{
+          page:pagination.value.current,
+          size:pagination.value.pageSize
+        }
+      }).then(
           res => {
             console.log(res);
-            ebooks.value = res.data.content.list;
+            const data = res.data
+            if(data.success){
+              ebooks.value = data.content.list;
+              pagination.value.total = data.content.total;
+            }
+            else {
+              message.error(data.message);
+            }
           }
       );
     });

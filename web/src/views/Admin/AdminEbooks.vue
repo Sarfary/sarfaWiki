@@ -75,7 +75,7 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
-
+import {message} from "ant-design-vue";
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
@@ -173,6 +173,10 @@ export default defineComponent({
                 page: pagination.value.current,
                 size: pagination.value.pageSize
               });
+            }
+            else {
+              confirmLoading.value = false;
+              message.error(data.message);
             }
           }
       )

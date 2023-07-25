@@ -34,9 +34,7 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        if (!ObjectUtils.isEmpty((req.getPage())) | !ObjectUtils.isEmpty(req.getSize())) {
-            PageHelper.startPage(req.getPage(), req.getSize());
-        }
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
