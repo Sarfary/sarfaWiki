@@ -19,6 +19,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'adminEbooks',
     component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminEbooks.vue')
   },
+  {
+    path: '/admin/category',
+    name: 'adminCategory',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminCategory.vue')
+  },
 
 
 ]
