@@ -27,7 +27,6 @@
           :pagination="pagination"
           :loading="loading"
           @change="handleTableChange"
-          class="categoryTable"
       >
         <template v-slot:action="{ text, record }">
           <a-space size="large">
@@ -95,19 +94,23 @@ export default defineComponent({
 
       {
         title: '名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        width:'400px'
       },
       {
         title: '父分类',
-        dataIndex: 'parent'
+        dataIndex: 'parent',
+        width:'400px'
       },
       {
         title: '顺序',
         dataIndex: 'sort',
+        width:'400px'
       },
       {
         title: 'Action',
         key: 'action',
+        width:'400px',
         slots: {customRender: 'action'}
       }
     ];
@@ -225,8 +228,5 @@ export default defineComponent({
 .searchKeyword {
   display: flex;
   float: right;
-}
-.categoryTable{
-
 }
 </style>
