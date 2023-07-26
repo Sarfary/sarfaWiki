@@ -49,7 +49,7 @@
 
   <a-modal v-model:open="open" title="分类" :confirm-loading="confirmLoading" @ok="handleOk">
     <a-form
-        :model="categorys"
+        :model="category"
         name="basic"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }"
@@ -61,7 +61,19 @@
       </a-form-item>
 
       <a-form-item label=父分类>
-        <a-input v-model:value="category.parent"/>
+<!--        <a-input v-model:value="category.parent"/>-->
+        <a-select
+            ref="select"
+            v-model:value="category.parent"
+            placeholder=""
+        >
+          <a-select-option value="0">
+            无
+          </a-select-option>
+          <a-select-option v-for="c in listCategory" :key="c.id" :value="c.id" :disabled="category.id == c.id">
+            {{c.name}}
+          </a-select-option>
+        </a-select>
       </a-form-item>
 
       <a-form-item label=顺序>
@@ -124,7 +136,7 @@ export default defineComponent({
     const search = ()=> {
         handleQuery(
             {
-              name:keyword.value,
+              name:keyword.value
             }
         )
     }
@@ -141,26 +153,36 @@ export default defineComponent({
         categorys.value = data.content.list;
         listCategory.value = [];
         listCategory.value = Tool.array2Tree(categorys.value,0);
+        listCategory.value = Tool.parentIdToParentName(listCategory.value);
         listCategory.value = Tool.keySearch(listCategory.value,categorys.value);
+        console.log(listCategory);
       });
     };
-    const handleTableChange = (pagination: any) => {
+    const handleTableChange = () => {
       handleQuery({
       });
     };
     const handleOk = () => {
       confirmLoading.value = true;
-      axios.post("/category/save", category.value).then(
+      category.value = Tool.parentNameToParentId(category.value,listCategory.value);
+      console.log("category:",category.value);
+      axios.post("/category/save", {
+        id:category.value.id,
+        parent:category.value.parent,
+        name:category.value.name,
+        sort:category.value.sort
+      }).then(
           (response) => {
             const data = response.data;
+            confirmLoading.value = false;
             if (data.success) {
               open.value = false;
-              confirmLoading.value = false;
               //重新加载页面
               handleQuery({});
             } else {
               confirmLoading.value = false;
               message.error(data.message);
+              console.log(listCategory);
             }
           }
       )
