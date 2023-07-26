@@ -35,6 +35,9 @@ public class CategoryService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+        if(!ObjectUtils.isEmpty(req.getId())){
+            criteria.andIdEqualTo(req.getId());
+        }
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
         List<CategoryQueryResp> list = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
