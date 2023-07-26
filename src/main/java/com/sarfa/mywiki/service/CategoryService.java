@@ -30,6 +30,7 @@ public class CategoryService {
 
     public PageResp<CategoryQueryResp> list(CategoryQueryReq req) {
         CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort");
         CategoryExample.Criteria criteria = categoryExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
@@ -38,7 +39,7 @@ public class CategoryService {
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
         List<CategoryQueryResp> list = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
         PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
-        PageResp<CategoryQueryResp> objectPageResp = new PageResp<CategoryQueryResp>();
+        PageResp<CategoryQueryResp> objectPageResp = new PageResp<>();
         objectPageResp.setTotal(pageInfo.getTotal());
         objectPageResp.setList(list);
 //        List<CategoryResp> respList = new ArrayList<>();

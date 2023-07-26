@@ -22,9 +22,9 @@
 
       <a-table
           :columns="columns"
-          :data-source="categorys"
+          :data-source="listCategory"
           row-key="id"
-          :pagination="pagination"
+          :pagination="false"
           :loading="loading"
           @change="handleTableChange"
       >
@@ -84,12 +84,8 @@ export default defineComponent({
     const categorys = ref();
     const category = ref();
     const keyword = ref();
-    const pagination = ref({
-      current: 1,
-      pageSize: 8,
-      total: 0
-    });
     const loading = ref(false);
+    const listCategory = ref();
     const columns = [
 
       {
@@ -129,8 +125,6 @@ export default defineComponent({
         handleQuery(
             {
               name:keyword.value,
-              page: 1,
-              size: pagination.value.pageSize
             }
         )
     }
@@ -145,15 +139,13 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         categorys.value = data.content.list;
-        //重置分页按钮
-        pagination.value.current = params.page;
-        pagination.value.total = data.content.total;
+        listCategory.value = [];
+        listCategory.value = Tool.array2Tree(categorys.value,0);
+        listCategory.value = Tool.keySearch(listCategory.value,categorys.value);
       });
     };
     const handleTableChange = (pagination: any) => {
       handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
       });
     };
     const handleOk = () => {
@@ -165,10 +157,7 @@ export default defineComponent({
               open.value = false;
               confirmLoading.value = false;
               //重新加载页面
-              handleQuery({
-                page: pagination.value.current,
-                size: pagination.value.pageSize
-              });
+              handleQuery({});
             } else {
               confirmLoading.value = false;
               message.error(data.message);
@@ -182,25 +171,18 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           //重新加载页面
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize
-          });
+          handleQuery({});
         }
       })
     }
 
     onMounted(() => {
-      handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
-
-      });
+      handleQuery({});
     })
 
     return {
       categorys,
-      pagination,
+      listCategory,
       columns,
       loading,
       confirmLoading,

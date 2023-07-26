@@ -31,7 +31,8 @@ export class Tool {
      * 使用递归将数组转为树形结构
      * 父ID属性为parent
      */
-    public static array2Tree (array: any, parentId: number) {
+    public static array2Tree (category: any, parentId: number) {
+        const array = Tool.copy(category);
         if (Tool.isEmpty(array)) {
             return [];
         }
@@ -49,8 +50,23 @@ export class Tool {
                     c.children = children;
                 }
             }
+            // for (let j = 0; j < array.length; j++){
+            //     if(c.parent == array[j].id) c.parent = array[j].name;
+            //     if(c.parent == 0) c.parent = "无" ;
+            // }
         }
         return result;
+    }
+
+    /**
+     * 分类查询
+     *
+     */
+    public static keySearch (array: any,categorys: any){
+        if(Tool.isEmpty(array)){
+            return categorys;
+        }
+        else return array;
     }
 
     /**
