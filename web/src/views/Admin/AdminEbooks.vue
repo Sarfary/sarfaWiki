@@ -31,6 +31,13 @@
         <template #cover="{ text:cover }">
           <img class="img" v-if="cover" :src="cover" alt="avatar"/>
         </template>
+        <template v-slot:category1Id="{text, record }">
+          {{getCategoryName(record.category1Id)}}
+        </template>
+
+        <template v-slot:category2Id="{text, record }">
+          {{getCategoryName(record.category2Id)}}
+        </template>
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
@@ -53,7 +60,7 @@
 
   <a-modal v-model:open="open" title="电子书" :confirm-loading="confirmLoading" @ok="handleOk">
     <a-form
-        :model="ebooks"
+        :model="ebook"
         name="basic"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }"
@@ -68,12 +75,18 @@
         <a-input v-model:value="ebook.name"/>
       </a-form-item>
 
-      <a-form-item label=分类一>
-        <a-input v-model:value="ebook.category1Id"/>
-      </a-form-item>
 
-      <a-form-item label=分类二>
-        <a-input v-model:value="ebook.category2Id"/>
+      <a-form-item label=分类>
+        <a-cascader
+            v-model:value="categoryId"
+            :options="listCategory"
+            :field-names="{label:'name' , value:'id' , children:'children'}"
+        />
+<!--        <a-input v-model:value="ebook.category1Id"/>-->
+<!--      </a-form-item>-->
+
+<!--      <a-form-item label=分类二>-->
+<!--        <a-input v-model:value="ebook.category2Id"/>-->
       </a-form-item>
 
       <a-form-item label=描述>
@@ -106,48 +119,65 @@ export default defineComponent({
       {
         title: '封面',
         dataIndex: 'cover',
-        slots: {customRender: 'cover'}
+        slots: {customRender: 'cover'},
+        width:'150px'
       },
       {
         title: '名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        width:'200px'
       },
       {
         title: '分类一',
         dataIndex: 'category1Id',
+        slots: {customRender: 'category1Id'},
+        width:'200px'
       },
       {
         title: '分类二',
         dataIndex: 'category2Id',
+        slots: {customRender: 'category2Id'},
+        width:'200px'
       },
       {
         title: '文档数',
-        dataIndex: 'docCount'
+        dataIndex: 'docCount',
+        width:'150px'
       },
       {
         title: '阅读数',
-        dataIndex: 'viewCount'
+        dataIndex: 'viewCount',
+        width:'150px'
       },
       {
         title: '点赞数',
-        dataIndex: 'voteCount'
+        dataIndex: 'voteCount',
+        width:'150px'
       },
       {
         title: 'Action',
         key: 'action',
+        width:'400px',
         slots: {customRender: 'action'}
       }
     ];
     const open = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
-
+    const categoryId = ref();
+    const listCategory = ref();
+    let categorys:any;
     const edit = (record: any) => {
       open.value = true;
       ebook.value = Tool.copy(record);
+      categoryId.value = [getCategoryName(ebook.value.category1Id),getCategoryName(ebook.value.category2Id)];
+      if(categoryId.value[0] === ''){
+        categoryId.value = [];
+      }
     };
     const add = () => {
       open.value = true;
       ebook.value = {};
+      categoryId.value = [];
     }
     const search = ()=> {
         handleQuery(
@@ -169,6 +199,7 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         ebooks.value = data.content.list;
+        //
         //重置分页按钮
         pagination.value.current = params.page;
         pagination.value.total = data.content.total;
@@ -181,8 +212,24 @@ export default defineComponent({
         size: pagination.pageSize
       });
     };
+    const QueryCategorysAndEbooks = () => {
+      axios.get("/category/list").then(
+          (response) => {
+            const data = response.data;
+            categorys = data.content.list;
+            listCategory.value = [];
+            listCategory.value = Tool.array2Tree(categorys,0);
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize
+            });
+          }
+      )
+    }
     const handleOk = () => {
       confirmLoading.value = true;
+      ebook.value.category1Id = getCategoryId(categoryId.value[0]);
+      ebook.value.category2Id = getCategoryId(categoryId.value[1]);
       axios.post("/ebook/save", ebook.value).then(
           (response) => {
             const data = response.data;
@@ -191,6 +238,7 @@ export default defineComponent({
               confirmLoading.value = false;
               //重新加载页面
               handleQuery({
+                name:keyword.value,
                 page: pagination.value.current,
                 size: pagination.value.pageSize
               });
@@ -202,6 +250,29 @@ export default defineComponent({
       )
 
     };
+    const getCategoryName  = (cid:number) => {
+      let result = "";
+      categorys.forEach((item:any)=>{
+        if(Number(item.id) === Number(cid)){
+          result = item.name;
+        }
+      });
+      return result;
+    }
+
+    const getCategoryId = (name:string)=>{
+      let result = "";
+      categorys.forEach((item:any)=>{
+        if(Number(item.name) === Number(name)){
+          result = item.id;
+        }
+      });
+      if(result === ''){
+        //本身就是id
+        return name;
+      }
+      else return result;
+    }
     const DeleteEbook = (id: number) => {
       axios.delete("/ebook/delete/" + id).then((response) => {
         const data = response.data;
@@ -216,11 +287,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
-
-      });
+      QueryCategorysAndEbooks();
     })
 
     return {
@@ -232,12 +299,16 @@ export default defineComponent({
       open,
       ebook,
       keyword,
+      categoryId,
+      listCategory,
+
       handleTableChange,
       edit,
       add,
       search,
       handleOk,
-      DeleteEbook
+      DeleteEbook,
+      getCategoryName
 
 
     }
