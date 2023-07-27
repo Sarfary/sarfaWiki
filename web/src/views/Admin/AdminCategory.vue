@@ -6,18 +6,18 @@
           新增
         </a-button>
 
-        <a-form
-            layout="inline"
-            :model="keyword"
-            class="searchKeyword"
-        >
-          <a-form-item>
-            <a-input v-model:value="keyword" placeholder="请输入需要查询的分类"></a-input>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="search">搜索</a-button>
-          </a-form-item>
-        </a-form>
+<!--        <a-form-->
+<!--            layout="inline"-->
+<!--            :model="keyword"-->
+<!--            class="searchKeyword"-->
+<!--        >-->
+<!--          <a-form-item>-->
+<!--            <a-input v-model:value="keyword" placeholder="请输入需要查询的分类"></a-input>-->
+<!--          </a-form-item>-->
+<!--          <a-form-item>-->
+<!--            <a-button type="primary" @click="search">搜索</a-button>-->
+<!--          </a-form-item>-->
+<!--        </a-form>-->
       </div>
 
       <a-table
@@ -95,7 +95,6 @@ export default defineComponent({
   setup() {
     const categorys = ref();
     const category = ref();
-    const keyword = ref();
     const loading = ref(false);
     const listCategory = ref();
     const columns = [
@@ -133,14 +132,6 @@ export default defineComponent({
       open.value = true;
       category.value = {};
     }
-    const search = ()=> {
-        handleQuery(
-            {
-              name:keyword.value
-            }
-        )
-    }
-
 
     // 数据查询
     const handleQuery = (params: any) => {
@@ -154,8 +145,6 @@ export default defineComponent({
         listCategory.value = [];
         listCategory.value = Tool.array2Tree(categorys.value,0);
         listCategory.value = Tool.parentIdToParentName(listCategory.value);
-        listCategory.value = Tool.keySearch(listCategory.value,categorys.value);
-        console.log(listCategory);
       });
     };
     const handleTableChange = () => {
@@ -165,7 +154,6 @@ export default defineComponent({
     const handleOk = () => {
       confirmLoading.value = true;
       category.value = Tool.parentNameToParentId(category.value,listCategory.value);
-      console.log("category:",category.value);
       axios.post("/category/save", {
         id:category.value.id,
         parent:category.value.parent,
@@ -182,7 +170,6 @@ export default defineComponent({
             } else {
               confirmLoading.value = false;
               message.error(data.message);
-              console.log(listCategory);
             }
           }
       )
@@ -210,11 +197,9 @@ export default defineComponent({
       confirmLoading,
       open,
       category,
-      keyword,
       handleTableChange,
       edit,
       add,
-      search,
       handleOk,
       DeleteCategory
 
