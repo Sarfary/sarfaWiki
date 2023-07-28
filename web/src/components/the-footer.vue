@@ -1,6 +1,6 @@
 <template>
   <a-layout-footer style="text-align: center">
-    Ant Design ©2018 Created by Ant UED
+    Sarfa Wiki ©2023 Created by Sarfa
   </a-layout-footer>
 </template>
 
