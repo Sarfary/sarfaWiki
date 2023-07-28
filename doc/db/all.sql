@@ -37,7 +37,7 @@ insert into `ebook` (id, name, description) values (2, 'Vue 入门教程', '零�
 insert into `ebook` (id, name, description) values (3, 'Python 入门教程', '零基础入门 Python 开发，企业级应用开发最佳首选框架');
 insert into `ebook` (id, name, description) values (4, 'Mysql 入门教程', '零基础入门 Mysql 开发，企业级应用开发最佳首选框架');
 insert into `ebook` (id, name, description) values (5, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应用开发最佳首选框架');
-``
+
  # 分类
  drop table if exists `category`;
  create table `category` (
@@ -65,25 +65,24 @@ insert into `category` (id, parent, name, sort) values (502, 500, '开发工具'
 insert into `category` (id, parent, name, sort) values (503, 500, '热门服务端语言', 503);
 --
 -- -- 文档表
--- drop table if exists `doc`;
--- create table `doc` (
---   `id` bigint not null comment 'id',
---   `ebook_id` bigint not null default 0 comment '电子书id',
---   `parent` bigint not null default 0 comment '父id',
---   `name` varchar(50) not null comment '名称',
---   `sort` int comment '顺序',
---   `view_count` int default 0 comment '阅读数',
---   `vote_count` int default 0 comment '点赞数',
---   primary key (`id`)
--- ) engine=innodb default charset=utf8mb4 comment='文档';
---
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (1, 1, 0, '文档1', 1, 0, 0);
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (2, 1, 1, '文档1.1', 1, 0, 0);
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (3, 1, 0, '文档2', 2, 0, 0);
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (4, 1, 3, '文档2.1', 1, 0, 0);
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (5, 1, 3, '文档2.2', 2, 0, 0);
--- insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (6, 1, 5, '文档2.2.1', 1, 0, 0);
---
+drop table if exists `doc`;
+ create table `doc` (
+   `id` bigint not null comment 'id',
+   `ebook_id` bigint not null default 0 comment '电子书id',
+   `parent` bigint not null default 0 comment '父id',
+   `name` varchar(50) not null comment '名称',
+   `sort` int comment '顺序',
+   `view_count` int default 0 comment '阅读数',
+   `vote_count` int default 0 comment '点赞数',
+   primary key (`id`)
+ ) engine=innodb default charset=utf8mb4 comment='文档';
+
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (1, 1, 0, '文档1', 1, 0, 0);
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (2, 1, 1, '文档1.1', 1, 0, 0);
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (3, 1, 0, '文档2', 2, 0, 0);
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (4, 1, 3, '文档2.1', 1, 0, 0);
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (5, 1, 3, '文档2.2', 2, 0, 0);
+ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (6, 1, 5, '文档2.2.1', 1, 0, 0);
 -- -- 文档内容
 -- drop table if exists `content`;
 -- create table `content` (

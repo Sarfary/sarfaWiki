@@ -21,7 +21,6 @@
                 <span>{{ child.name }}</span>
               </a-menu-item>
             </a-sub-menu>
-
           </a-menu>
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
@@ -48,7 +47,6 @@
                       <a-avatar :src="item.cover" shape="square" :size="100"/>
                     </template>
                   </a-list-item-meta>
-
                 </a-list-item>
               </template>
             </a-list>
@@ -60,7 +58,6 @@
                 v-show="isShowPagination"
                 @change="handleListChange"
             >
-
             </a-pagination>
           </div>
         </a-layout-content>
@@ -108,7 +105,6 @@ export default defineComponent({
         } else {
           message.error(data.message);
         }
-
       });
     }
     const QueryEbooks = (parms: any) => {
@@ -153,13 +149,11 @@ export default defineComponent({
           size: pagination.value.pageSize
         })
       }
-
     }
     // 生命周期函数
     onMounted(() => {
       console.log("onMounted");
       QueryCategorys({});
-
     });
     return {
       ebooks,
@@ -170,7 +164,6 @@ export default defineComponent({
       isShowPagination,
       clickItem,
       handleListChange
-
     }
 
   }
