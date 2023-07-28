@@ -111,7 +111,7 @@ export default defineComponent({
     const keyword = ref();
     const pagination = ref({
       current: 1,
-      pageSize: 4,
+      pageSize: 5,
       total: 0
     });
     const loading = ref(false);
@@ -206,7 +206,6 @@ export default defineComponent({
       });
     };
     const handleTableChange = (pagination: any) => {
-      console.log("看看自带的分页参数都有啥" + pagination);
       handleQuery({
         page: pagination.current,
         size: pagination.pageSize
@@ -263,7 +262,8 @@ export default defineComponent({
     const getCategoryId = (name:string)=>{
       let result = "";
       categorys.forEach((item:any)=>{
-        if(Number(item.name) === Number(name)){
+        console.log()
+        if(item.name === name){
           result = item.id;
         }
       });
