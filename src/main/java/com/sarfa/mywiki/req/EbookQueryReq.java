@@ -15,6 +15,23 @@ public class EbookQueryReq extends PageReq{
 
     private String name;
 
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long category1Id;
+
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long category2Id;
+
+    @Override
+    public String toString() {
+        return "EbookQueryReq{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category1Id=" + category1Id +
+                ", category2Id=" + category2Id +
+                '}';
+    }
 
     public Long getId() {
         return id;
@@ -32,16 +49,19 @@ public class EbookQueryReq extends PageReq{
         this.name = name;
     }
 
+    public Long getCategory1Id() {
+        return category1Id;
+    }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append("]");
-        return sb.toString();
+    public void setCategory1Id(Long category1Id) {
+        this.category1Id = category1Id;
+    }
+
+    public Long getCategory2Id() {
+        return category2Id;
+    }
+
+    public void setCategory2Id(Long category2Id) {
+        this.category2Id = category2Id;
     }
 }

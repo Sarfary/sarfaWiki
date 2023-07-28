@@ -5,47 +5,64 @@
         <a-layout-sider width="200" style="background: #fff">
           <a-menu
               mode="inline"
-              style="height: 730px"
+              style="height: 100%"
+              @Click="clickItem"
           >
             <a-menu-item key="welcome">
-              <router-link :to="'/'">
-                <MailOutLined/><span>欢迎</span>
-              </router-link>
+              <MailOutLined/>
+              <span>欢迎</span>
             </a-menu-item>
             <a-sub-menu v-for="item in listCategory" :key="item.id">
               <template v-slot:title>
-                <span><user-outlined/>{{item.name}}</span>
+                <span><user-outlined/>{{ item.name }}</span>
               </template>
               <a-menu-item v-for="child in item.children" :key="child.id">
-                <MailOutLined/><span>{{child.name}}</span>
+                <MailOutLined/>
+                <span>{{ child.name }}</span>
               </a-menu-item>
             </a-sub-menu>
 
           </a-menu>
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-          <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"
-                  :pagination="pagination" :data-source="ebooks">
-            <template #renderItem="{ item }">
-              <a-list-item key="item.name">
-                <template #actions>
+          <div v-show="isWelcome">welcome</div>
+          <div v-show="!isWelcome">
+            <a-list item-layout="vertical"
+                    size="large"
+                    :grid="{ gutter: 20, column: 3 }"
+                    :data-source="ebooks"
+            >
+              <template #renderItem="{ item }">
+                <a-list-item key="item.name">
+                  <template #actions>
                   <span v-for="{ icon, text } in actions" :key="icon">
                     <component :is="icon" style="margin-right: 8px"/>
                     {{ text }}
                   </span>
-                </template>
-                <a-list-item-meta :description="item.description">
-                  <template #title>
-                    <a :href="item.href">{{ item.name }}</a>
                   </template>
-                  <template #avatar>
-                    <a-avatar :src="item.cover" shape="square" :size="100"/>
-                  </template>
-                </a-list-item-meta>
+                  <a-list-item-meta :description="item.description">
+                    <template #title>
+                      <a :href="item.href">{{ item.name }}</a>
+                    </template>
+                    <template #avatar>
+                      <a-avatar :src="item.cover" shape="square" :size="100"/>
+                    </template>
+                  </a-list-item-meta>
 
-              </a-list-item>
-            </template>
-          </a-list>
+                </a-list-item>
+              </template>
+            </a-list>
+            <a-pagination
+                class="paginationStyle"
+                v-model:current="pagination.current"
+                v-model:pageSize="pagination.pageSize"
+                :total="pagination.total"
+                v-show="isShowPagination"
+                @change="handleListChange"
+            >
+
+            </a-pagination>
+          </div>
         </a-layout-content>
       </a-layout>
     </a-layout-content>
@@ -78,57 +95,90 @@ export default defineComponent({
     const ebooks = ref();
     const listCategory = ref();
     const categorys = ref();
-    const QueryCategorys = (params:any) => {
+    const isShowPagination = ref(false);
+    const QueryCategorys = (params: any) => {
       axios.get("/category/list", {
-        params:params
+        params: params
       }).then((response) => {
         const data = response.data;
-        if(data.success){
+        if (data.success) {
           categorys.value = data.content.list;
           listCategory.value = [];
-          listCategory.value = Tool.array2Tree(categorys.value,0);
-        }
-        else {
+          listCategory.value = Tool.array2Tree(categorys.value, 0);
+        } else {
           message.error(data.message);
         }
 
       });
     }
-    const QueryEbooks = (parms:any) => {
-      axios.get("/ebook/list",{
-        params:parms
+    const QueryEbooks = (parms: any) => {
+      axios.get("/ebook/list", {
+        params: parms
       }).then(
           res => {
-            console.log(res);
             const data = res.data
-            if(data.success){
+            if (data.success) {
               ebooks.value = data.content.list;
               pagination.value.total = data.content.total;
-            }
-            else {
+              if (data.content.total != 0) isShowPagination.value = true;
+            } else {
               message.error(data.message);
             }
           }
       );
     }
+    const keyPath: any = [];
+    const handleListChange = (page: any) => {
+      // console.log(page);
+      QueryEbooks({
+        page: page,
+        size: pagination.value.pageSize,
+        category1Id: keyPath.value[0],
+        category2Id: keyPath.value[1]
+      });
+    }
+    const isWelcome = ref(true);
+    const clickItem = (item: any) => {
+      isShowPagination.value = false;
+      if (item.key === 'welcome') {
+        isWelcome.value = true;
+      } else {
+        isWelcome.value = false;
+        pagination.value.current = 1;
+        keyPath.value = item.keyPath;
+        QueryEbooks({
+          category1Id: keyPath.value[0],
+          category2Id: keyPath.value[1],
+          page: pagination.value.current,
+          size: pagination.value.pageSize
+        })
+      }
 
+    }
     // 生命周期函数
     onMounted(() => {
       console.log("onMounted");
       QueryCategorys({});
-      QueryEbooks({
-        page:pagination.value.current,
-        size:pagination.value.pageSize
-      });
 
     });
     return {
       ebooks,
       pagination,
       actions,
-      listCategory
+      listCategory,
+      isWelcome,
+      isShowPagination,
+      clickItem,
+      handleListChange
+
     }
 
   }
 });
 </script>
+
+<style>
+.paginationStyle {
+  float: right;
+}
+</style>
