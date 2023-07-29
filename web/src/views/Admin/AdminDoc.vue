@@ -6,23 +6,12 @@
           新增
         </a-button>
 
-<!--        <a-form-->
-<!--            layout="inline"-->
-<!--            :model="keyword"-->
-<!--            class="searchKeyword"-->
-<!--        >-->
-<!--          <a-form-item>-->
-<!--            <a-input v-model:value="keyword" placeholder="请输入需要查询的分类"></a-input>-->
-<!--          </a-form-item>-->
-<!--          <a-form-item>-->
-<!--            <a-button type="primary" @click="search">搜索</a-button>-->
-<!--          </a-form-item>-->
-<!--        </a-form>-->
+
       </div>
 
       <a-table
           :columns="columns"
-          :data-source="listCategory"
+          :data-source="listDoc"
           row-key="id"
           :pagination="false"
           :loading="loading"
@@ -32,12 +21,12 @@
           <a-space size="large">
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
-                title="Are you sure delete this category?"
+                title="Are you sure delete this doc?"
                 ok-text="Yes"
                 cancel-text="No"
-                @confirm="DeleteCategory(record.id)"
+                @confirm="DeleteDoc(record.id)"
             >
-              <a-button type="primary" danger>删除</a-button>
+              <a-button danger block>删除</a-button>
 
             </a-popconfirm>
 
@@ -49,7 +38,7 @@
 
   <a-modal v-model:open="open" title="分类" :confirm-loading="confirmLoading" @ok="handleOk">
     <a-form
-        :model="category"
+        :model="doc"
         name="basic"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }"
@@ -57,27 +46,27 @@
     >
       <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
       <a-form-item label=名称>
-        <a-input v-model:value="category.name"/>
+        <a-input v-model:value="doc.name"/>
       </a-form-item>
 
       <a-form-item label=父分类>
-<!--        <a-input v-model:value="category.parent"/>-->
+<!--        <a-input v-model:value="doc.parent"/>-->
         <a-select
             ref="select"
-            v-model:value="category.parent"
+            v-model:value="doc.parent"
             placeholder=""
         >
           <a-select-option value="0">
             无
           </a-select-option>
-          <a-select-option v-for="c in listCategory" :key="c.id" :value="c.id" :disabled="category.id == c.id">
+          <a-select-option v-for="c in listDoc" :key="c.id" :value="c.id" :disabled="doc.id == c.id">
             {{c.name}}
           </a-select-option>
         </a-select>
       </a-form-item>
 
       <a-form-item label=顺序>
-        <a-input v-model:value="category.sort"/>
+        <a-input v-model:value="doc.sort"/>
       </a-form-item>
 
     </a-form>
@@ -91,12 +80,12 @@ import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 
 export default defineComponent({
-  name: 'AdminCategory',
+  name: 'AdminDoc',
   setup() {
-    const categorys = ref();
-    const category = ref();
+    const docs = ref();
+    const doc = ref();
     const loading = ref(false);
-    const listCategory = ref();
+    const listDoc = ref();
     const columns = [
 
       {
@@ -126,25 +115,26 @@ export default defineComponent({
 
     const edit = (record: any) => {
       open.value = true;
-      category.value = Tool.copy(record);
+      doc.value = Tool.copy(record);
     };
     const add = () => {
       open.value = true;
-      category.value = {};
+      doc.value = {};
     }
 
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
-      axios.get("/category/list", {
+      axios.get("/doc/list", {
         params:params
       }).then((response) => {
         loading.value = false;
         const data = response.data;
-        categorys.value = data.content.list;
-        listCategory.value = [];
-        listCategory.value = Tool.array2Tree(categorys.value,0);
-        listCategory.value = Tool.parentIdToParentName(listCategory.value);
+        docs.value = data.content.list;
+        listDoc.value = [];
+        listDoc.value = Tool.array2Tree(docs.value,0);
+        console.log(listDoc);
+        listDoc.value = Tool.parentIdToParentName(listDoc.value);
       });
     };
     const handleTableChange = () => {
@@ -153,12 +143,12 @@ export default defineComponent({
     };
     const handleOk = () => {
       confirmLoading.value = true;
-      category.value = Tool.parentNameToParentId(category.value,listCategory.value);
-      axios.post("/category/save", {
-        id:category.value.id,
-        parent:category.value.parent,
-        name:category.value.name,
-        sort:category.value.sort
+      doc.value = Tool.parentNameToParentId(doc.value,listDoc.value);
+      axios.post("/doc/save", {
+        id:doc.value.id,
+        parent:doc.value.parent,
+        name:doc.value.name,
+        sort:doc.value.sort
       }).then(
           (response) => {
             const data = response.data;
@@ -175,8 +165,8 @@ export default defineComponent({
       )
 
     };
-    const DeleteCategory = (id: number) => {
-      axios.delete("/category/delete/" + id).then((response) => {
+    const DeleteDoc = (id: number) => {
+      axios.delete("/doc/delete/" + id).then((response) => {
         const data = response.data;
         if (data.success) {
           //重新加载页面
@@ -190,18 +180,18 @@ export default defineComponent({
     })
 
     return {
-      categorys,
-      listCategory,
+      docs,
+      listDoc,
       columns,
       loading,
       confirmLoading,
       open,
-      category,
+      doc,
       handleTableChange,
       edit,
       add,
       handleOk,
-      DeleteCategory
+      DeleteDoc
 
 
     }

@@ -41,6 +41,9 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
+            <router-link to="/admin/doc">
+              <a-button type="primary" block>文档管理</a-button>
+            </router-link>
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
                 title="Are you sure delete this ebook?"
@@ -48,7 +51,7 @@
                 cancel-text="No"
                 @confirm="DeleteEbook(record.id)"
             >
-              <a-button danger block>删除</a-button>
+              <a-button type="primary" danger >删除</a-button>
 
             </a-popconfirm>
 
