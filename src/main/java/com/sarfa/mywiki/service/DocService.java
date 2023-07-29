@@ -69,7 +69,8 @@ public class DocService {
             if(ObjectUtils.isEmpty(doc.getParent())){
                 doc.setParent(0L);
             }
-
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
         } else {
             //id不为空，是更新
