@@ -62,7 +62,6 @@ export class Tool {
     public static parentIdToParentName(array:any,parentId:number,parentName:string){
         for(let i=0;i<array.length;i++){
             const c = array[i];
-            console.log(c.name);
 
             if(Number(c.parent) === Number(parentId)){
                 c.parent = parentName;

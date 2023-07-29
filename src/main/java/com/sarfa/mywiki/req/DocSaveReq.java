@@ -23,6 +23,10 @@ public class DocSaveReq {
     @NotNull(message = "顺序不能为空")
     private Integer sort;
 
+    private Integer viewCount;
+
+    private Integer voteCount;
+
     public Long getId() {
         return id;
     }
@@ -63,6 +67,22 @@ public class DocSaveReq {
         this.sort = sort;
     }
 
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
     @Override
     public String toString() {
         return "DocSaveReq{" +
@@ -71,6 +91,8 @@ public class DocSaveReq {
                 ", ebookId=" + ebookId +
                 ", name='" + name + '\'' +
                 ", sort=" + sort +
+                ", viewCount=" + viewCount +
+                ", voteCount=" + voteCount +
                 '}';
     }
 }

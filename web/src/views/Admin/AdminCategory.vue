@@ -67,7 +67,7 @@
             v-model:value="category.parent"
             placeholder=""
         >
-          <a-select-option value="0">
+          <a-select-option :value="0">
             无
           </a-select-option>
           <a-select-option v-for="c in listCategory" :key="c.id" :value="c.id" :disabled="category.id == c.id">

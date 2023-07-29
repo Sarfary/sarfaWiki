@@ -48,23 +48,19 @@
       <a-form-item label=名称>
         <a-input v-model:value="doc.name"/>
       </a-form-item>
-
       <a-form-item label=父分类>
-<!--        <a-input v-model:value="doc.parent"/>-->
-        <a-select
-            ref="select"
+        <a-tree-select
             v-model:value="doc.parent"
-            placeholder=""
+            show-search
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            allow-clear
+            tree-default-expand-all
+            :tree-data="treeSelectData"
+            :replaceFields="{label: 'name', value: 'id'}"
         >
-          <a-select-option value="0">
-            无
-          </a-select-option>
-          <a-select-option v-for="c in listDoc" :key="c.id" :value="c.id" :disabled="doc.id == c.id">
-            {{c.name}}
-          </a-select-option>
-        </a-select>
+        </a-tree-select>
       </a-form-item>
-
       <a-form-item label=顺序>
         <a-input v-model:value="doc.sort"/>
       </a-form-item>
@@ -78,30 +74,44 @@ import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'AdminDoc',
   setup() {
+    const route = useRoute();
     const docs = ref();
     const doc = ref();
     const loading = ref(false);
     const listDoc = ref();
+    const firstList = ref();
+    const treeSelectData = ref();
+    treeSelectData.value = [];
     const columns = [
-
       {
         title: '名称',
         dataIndex: 'name',
-        width:'400px'
+        width:'240px'
       },
       {
         title: '父文档',
         dataIndex: 'parent',
-        width:'400px'
+        width:'240px'
       },
       {
         title: '顺序',
         dataIndex: 'sort',
-        width:'400px'
+        width:'240px'
+      },
+      {
+        title: '阅读数',
+        dataIndex:'viewCount',
+        width:'240px'
+      },
+      {
+        title: '点赞数',
+        dataIndex:'voteCount',
+        width:'240px'
       },
       {
         title: 'Action',
@@ -116,10 +126,17 @@ export default defineComponent({
     const edit = (record: any) => {
       open.value = true;
       doc.value = Tool.copy(record);
+      treeSelectData.value = Tool.copy(firstList.value);
+      setDisabled(treeSelectData.value,record.id);
+      treeSelectData.value.unshift({id: 0, name: '无'});
+      console.log(treeSelectData.value);
     };
     const add = () => {
       open.value = true;
       doc.value = {};
+      treeSelectData.value = Tool.copy(firstList.value);
+      treeSelectData.value.unshift({id: 0, name: '无'});
+
     }
 
     // 数据查询
@@ -133,7 +150,9 @@ export default defineComponent({
         docs.value = data.content.list;
         listDoc.value = [];
         listDoc.value = Tool.array2Tree(docs.value,0);
+        firstList.value = Tool.copy(listDoc.value);
         listDoc.value = Tool.parentIdToParentName(listDoc.value,0,'无');
+
       });
     };
     const handleTableChange = () => {
@@ -143,12 +162,8 @@ export default defineComponent({
     const handleOk = () => {
       confirmLoading.value = true;
       doc.value = Tool.parentNameToParentId(doc.value,listDoc.value);
-      axios.post("/doc/save", {
-        id:doc.value.id,
-        parent:doc.value.parent,
-        name:doc.value.name,
-        sort:doc.value.sort
-      }).then(
+      axios.post("/doc/save", doc.value
+      ).then(
           (response) => {
             const data = response.data;
             confirmLoading.value = false;
@@ -164,6 +179,24 @@ export default defineComponent({
       )
 
     };
+    const setDisabled = (treeSelectData:any,id:number) => {
+        for(let i=0;i<treeSelectData.length;i++){
+          const node = treeSelectData[i];
+          if(Number(node.id) === Number(id)){
+            node.disabled = true;
+            if(Tool.isNotEmpty(node.children)){
+              for (let j=0;j<node.children.length;j++){
+                setDisabled(node.children,node.children[j].id);
+              }
+            }
+          }
+          else {
+            if(Tool.isNotEmpty(node.children)){
+              setDisabled(node.children,id);
+            }
+          }
+        }
+    }
     const DeleteDoc = (id: number) => {
       axios.delete("/doc/delete/" + id).then((response) => {
         const data = response.data;
@@ -186,6 +219,7 @@ export default defineComponent({
       confirmLoading,
       open,
       doc,
+      treeSelectData,
       handleTableChange,
       edit,
       add,
