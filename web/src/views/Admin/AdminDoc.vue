@@ -126,7 +126,7 @@ export default defineComponent({
     const edit = (record: any) => {
       open.value = true;
       doc.value = Tool.copy(record);
-      treeSelectData.value = Tool.copy(firstList.value);
+      treeSelectData.value = Tool.copy(firstList.value)||[];
       setDisabled(treeSelectData.value,record.id);
       treeSelectData.value.unshift({id: 0, name: '无'});
       console.log(treeSelectData.value);
@@ -136,7 +136,7 @@ export default defineComponent({
       doc.value = {
         ebookId:route.query.ebookId
       };
-      treeSelectData.value = Tool.copy(firstList.value);
+      treeSelectData.value = Tool.copy(firstList.value)||[];
       treeSelectData.value.unshift({id: 0, name: '无'});
 
     }
