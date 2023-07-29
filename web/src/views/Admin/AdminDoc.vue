@@ -133,17 +133,21 @@ export default defineComponent({
     };
     const add = () => {
       open.value = true;
-      doc.value = {};
+      doc.value = {
+        ebookId:route.query.ebookId
+      };
       treeSelectData.value = Tool.copy(firstList.value);
       treeSelectData.value.unshift({id: 0, name: '无'});
 
     }
 
     // 数据查询
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true;
       axios.get("/doc/list", {
-        params:params
+        params:{
+          ebookId:route.query.ebookId
+        }
       }).then((response) => {
         loading.value = false;
         const data = response.data;
@@ -156,8 +160,7 @@ export default defineComponent({
       });
     };
     const handleTableChange = () => {
-      handleQuery({
-      });
+      handleQuery();
     };
     const handleOk = () => {
       confirmLoading.value = true;
@@ -170,7 +173,7 @@ export default defineComponent({
             if (data.success) {
               open.value = false;
               //重新加载页面
-              handleQuery({});
+              handleQuery();
             } else {
               confirmLoading.value = false;
               message.error(data.message);
@@ -202,13 +205,13 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           //重新加载页面
-          handleQuery({});
+          handleQuery();
         }
       })
     }
 
     onMounted(() => {
-      handleQuery({});
+      handleQuery();
     })
 
     return {
@@ -225,8 +228,6 @@ export default defineComponent({
       add,
       handleOk,
       DeleteDoc
-
-
     }
 
   }

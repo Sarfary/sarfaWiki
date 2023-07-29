@@ -38,6 +38,10 @@ public class DocService {
         if(!ObjectUtils.isEmpty(req.getId())){
             criteria.andIdEqualTo(req.getId());
         }
+        if(!ObjectUtils.isEmpty(req.getEbookId())){
+            criteria.andEbookIdEqualTo(req.getEbookId());
+        }
+
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Doc> docList = docMapper.selectByExample(docExample);
         List<DocQueryResp> list = CopyUtil.copyList(docList, DocQueryResp.class);
