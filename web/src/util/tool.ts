@@ -59,15 +59,16 @@ export class Tool {
      * 将父分类的id，变为父分类的名字
      *
      */
-    public static parentIdToParentName(array:any){
+    public static parentIdToParentName(array:any,parentId:number,parentName:string){
         for(let i=0;i<array.length;i++){
             const c = array[i];
             console.log(c.name);
-            c.parent = "无";
+
+            if(Number(c.parent) === Number(parentId)){
+                c.parent = parentName;
+            }
             if(Tool.isNotEmpty(c.children)){
-                for(let j=0;j<c.children.length;j++){
-                    c.children[j].parent = c.name;
-                }
+                this.parentIdToParentName(c.children,c.id,c.name);
             }
 
         }

@@ -94,7 +94,7 @@ export default defineComponent({
         width:'400px'
       },
       {
-        title: '父分类',
+        title: '父文档',
         dataIndex: 'parent',
         width:'400px'
       },
@@ -133,8 +133,7 @@ export default defineComponent({
         docs.value = data.content.list;
         listDoc.value = [];
         listDoc.value = Tool.array2Tree(docs.value,0);
-        console.log(listDoc);
-        listDoc.value = Tool.parentIdToParentName(listDoc.value);
+        listDoc.value = Tool.parentIdToParentName(listDoc.value,0,'无');
       });
     };
     const handleTableChange = () => {

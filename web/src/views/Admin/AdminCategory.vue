@@ -144,7 +144,7 @@ export default defineComponent({
         categorys.value = data.content.list;
         listCategory.value = [];
         listCategory.value = Tool.array2Tree(categorys.value,0);
-        listCategory.value = Tool.parentIdToParentName(listCategory.value);
+        listCategory.value = Tool.parentIdToParentName(listCategory.value,0,'无');
       });
     };
     const handleTableChange = () => {

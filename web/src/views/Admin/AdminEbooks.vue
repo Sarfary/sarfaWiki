@@ -84,12 +84,8 @@
             v-model:value="categoryId"
             :options="listCategory"
             :field-names="{label:'name' , value:'id' , children:'children'}"
-        />
-<!--        <a-input v-model:value="ebook.category1Id"/>-->
-<!--      </a-form-item>-->
+        ></a-cascader>
 
-<!--      <a-form-item label=分类二>-->
-<!--        <a-input v-model:value="ebook.category2Id"/>-->
       </a-form-item>
 
       <a-form-item label=描述>
@@ -114,7 +110,7 @@ export default defineComponent({
     const keyword = ref();
     const pagination = ref({
       current: 1,
-      pageSize: 5,
+      pageSize: 4,
       total: 0
     });
     const loading = ref(false);
