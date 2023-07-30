@@ -24,7 +24,7 @@
                 title="Are you sure delete this doc?"
                 ok-text="Yes"
                 cancel-text="No"
-                @confirm="DeleteDoc(record.id)"
+                @confirm="DeleteDoc(record.id,treeSelectData)"
             >
               <a-button danger block>删除</a-button>
 
@@ -57,7 +57,7 @@
             allow-clear
             tree-default-expand-all
             :tree-data="treeSelectData"
-            :replaceFields="{label: 'name', value: 'id'}"
+            :fieldNames="{label: 'name', value: 'id'}"
         >
         </a-tree-select>
       </a-form-item>
@@ -91,27 +91,22 @@ export default defineComponent({
       {
         title: '名称',
         dataIndex: 'name',
-        width:'240px'
-      },
-      {
-        title: '父文档',
-        dataIndex: 'parent',
-        width:'240px'
+        width:'300px'
       },
       {
         title: '顺序',
         dataIndex: 'sort',
-        width:'240px'
+        width:'300px'
       },
       {
         title: '阅读数',
         dataIndex:'viewCount',
-        width:'240px'
+        width:'300px'
       },
       {
         title: '点赞数',
         dataIndex:'voteCount',
-        width:'240px'
+        width:'300px'
       },
       {
         title: 'Action',
@@ -129,7 +124,6 @@ export default defineComponent({
       treeSelectData.value = Tool.copy(firstList.value)||[];
       setDisabled(treeSelectData.value,record.id);
       treeSelectData.value.unshift({id: 0, name: '无'});
-      console.log(treeSelectData.value);
     };
     const add = () => {
       open.value = true;
@@ -155,7 +149,9 @@ export default defineComponent({
         listDoc.value = [];
         listDoc.value = Tool.array2Tree(docs.value,0);
         firstList.value = Tool.copy(listDoc.value);
-        listDoc.value = Tool.parentIdToParentName(listDoc.value,0,'无');
+        treeSelectData.value = Tool.copy(firstList.value)||[];
+        console.log(treeSelectData.value);
+        // listDoc.value = Tool.parentIdToParentName(listDoc.value,0,'无');
 
       });
     };
@@ -164,7 +160,7 @@ export default defineComponent({
     };
     const handleOk = () => {
       confirmLoading.value = true;
-      doc.value = Tool.parentNameToParentId(doc.value,listDoc.value);
+      // doc.value = Tool.parentNameToParentId(doc.value,listDoc.value);
       axios.post("/doc/save", doc.value
       ).then(
           (response) => {
@@ -200,7 +196,29 @@ export default defineComponent({
           }
         }
     }
-    const DeleteDoc = (id: number) => {
+    const DeleteDoc = (id: number,treeSelectData:any) => {
+      for (let i=0;i<treeSelectData.length;i++){
+        const node = treeSelectData[i];
+        if(Number(node.id) === Number(id)){
+          handleDelete(id);
+          if(Tool.isNotEmpty(node.children)){
+            for (let j=0;j<node.children.length;j++){
+              DeleteDoc(node.children[j].id,node.children);
+            }
+          }
+        }
+        else {
+          if(Tool.isNotEmpty(node.children)){
+            DeleteDoc(id,node.children);
+          }
+        }
+
+      }
+
+
+
+    }
+    const handleDelete = (id:number) => {
       axios.delete("/doc/delete/" + id).then((response) => {
         const data = response.data;
         if (data.success) {
