@@ -21,10 +21,10 @@
           <a-space size="large">
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
-                title="Are you sure delete this doc?"
+                title="Are you sure delete the documents?"
                 ok-text="Yes"
                 cancel-text="No"
-                @confirm="DeleteDoc(record.id,treeSelectData)"
+                @confirm="showDeleteConfirm(record.id)"
             >
               <a-button danger block>删除</a-button>
 
@@ -70,11 +70,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import {defineComponent, onMounted, ref, createVNode} from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import { useRoute } from 'vue-router';
+import { Modal } from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
   name: 'AdminDoc',
@@ -196,30 +198,51 @@ export default defineComponent({
           }
         }
     }
-    const DeleteDoc = (id: number,treeSelectData:any) => {
+    const deleteIdList:Array<string> = [];
+    const deleteNameList:Array<string> = [];
+    const getDeleteIdList = (id: number,treeSelectData:any) => {
       for (let i=0;i<treeSelectData.length;i++){
         const node = treeSelectData[i];
         if(Number(node.id) === Number(id)){
-          handleDelete(id);
+          deleteIdList.push(String(id));
+          deleteNameList.push(node.name);
           if(Tool.isNotEmpty(node.children)){
             for (let j=0;j<node.children.length;j++){
-              DeleteDoc(node.children[j].id,node.children);
+              getDeleteIdList(node.children[j].id,node.children);
             }
           }
         }
         else {
           if(Tool.isNotEmpty(node.children)){
-            DeleteDoc(id,node.children);
+            getDeleteIdList(id,node.children);
           }
         }
 
       }
 
-
-
     }
-    const handleDelete = (id:number) => {
-      axios.delete("/doc/delete/" + id).then((response) => {
+
+    const showDeleteConfirm = (id:number) => {
+      //初始化
+      deleteIdList.splice(0,deleteIdList.length);
+      deleteNameList.splice(0,deleteNameList.length);
+      //得到所有的要删除的文档
+      getDeleteIdList(id,treeSelectData.value);
+      Modal.confirm({
+        title: 'Are you sure delete the following documents?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: deleteNameList.join(","),
+        okText: 'Yes',
+        okType: 'danger',
+        cancelText: 'No',
+        onOk() {
+          handleDelete();
+        },
+      });
+    };
+
+    const handleDelete = () => {
+      axios.delete("/doc/delete/"+ deleteIdList.join(",")).then((response) => {
         const data = response.data;
         if (data.success) {
           //重新加载页面
@@ -245,7 +268,7 @@ export default defineComponent({
       edit,
       add,
       handleOk,
-      DeleteDoc
+      showDeleteConfirm
     }
 
   }

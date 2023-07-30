@@ -1,1 +1,3 @@
 GET http://localhost:8888/doc/list?id=4
+###
+DELETE http://localhost:8888/doc/delete/1,2
