@@ -33,6 +33,7 @@
           </a-space>
         </template>
       </a-table>
+<!--      <md-editor v-model="text"></md-editor>-->
     </a-layout-content>
   </a-layout>
 
@@ -77,9 +78,15 @@ import {Tool} from "@/util/tool";
 import { useRoute } from 'vue-router';
 import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import E from "wangeditor";
+import {MdEditor} from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
 
 export default defineComponent({
   name: 'AdminDoc',
+  components:{
+    // MdEditor,
+  },
   setup() {
     const route = useRoute();
     const docs = ref();
@@ -88,6 +95,7 @@ export default defineComponent({
     const listDoc = ref();
     const firstList = ref();
     const treeSelectData = ref();
+    const text = ref();
     treeSelectData.value = [];
     const columns = [
       {
@@ -264,6 +272,7 @@ export default defineComponent({
       open,
       doc,
       treeSelectData,
+      text,
       handleTableChange,
       edit,
       add,
