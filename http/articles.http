@@ -1,0 +1,1 @@
+GET http://localhost:8888/articles/list?page=1&size=0

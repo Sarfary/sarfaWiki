@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sarfa.mywiki.helper.LongJsonDeserializer;
 import com.sarfa.mywiki.helper.LongJsonSerializer;
 
-public class EbookQueryReq extends PageReq{
+public class ArticlesQueryReq extends PageReq{
     /**
      * id
      */
@@ -25,7 +25,7 @@ public class EbookQueryReq extends PageReq{
 
     @Override
     public String toString() {
-        return "EbookQueryReq{" +
+        return "ArticlesQueryReq{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", category1Id=" + category1Id +

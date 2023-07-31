@@ -1,16 +1,6 @@
-package com.sarfa.mywiki.resp;
+package com.sarfa.mywiki.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.sarfa.mywiki.helper.LongJsonDeserializer;
-import com.sarfa.mywiki.helper.LongJsonSerializer;
-
-public class EbookQueryResp {
-    /**
-     * id
-     */
-    @JsonSerialize(using = LongJsonSerializer.class)
-    @JsonDeserialize(using = LongJsonDeserializer.class)
+public class Articles {
     private Long id;
 
     private String name;
@@ -22,8 +12,6 @@ public class EbookQueryResp {
     private String description;
 
     private String cover;
-
-    private Integer docCount;
 
     private Integer viewCount;
 
@@ -77,14 +65,6 @@ public class EbookQueryResp {
         this.cover = cover;
     }
 
-    public Integer getDocCount() {
-        return docCount;
-    }
-
-    public void setDocCount(Integer docCount) {
-        this.docCount = docCount;
-    }
-
     public Integer getViewCount() {
         return viewCount;
     }
@@ -113,7 +93,6 @@ public class EbookQueryResp {
         sb.append(", category2Id=").append(category2Id);
         sb.append(", description=").append(description);
         sb.append(", cover=").append(cover);
-        sb.append(", docCount=").append(docCount);
         sb.append(", viewCount=").append(viewCount);
         sb.append(", voteCount=").append(voteCount);
         sb.append("]");

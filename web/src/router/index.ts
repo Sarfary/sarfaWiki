@@ -15,19 +15,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
-    path: '/admin/ebooks',
-    name: 'adminEbooks',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminEbooks.vue')
+    path: '/admin/articles',
+    name: 'adminArticles',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminArticles.vue')
   },
   {
     path: '/admin/category',
     name: 'adminCategory',
     component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminCategory.vue')
-  },
-  {
-    path: '/admin/doc',
-    name: 'adminDoc',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminDoc.vue')
   },
   {
     path: '/admin/editor',

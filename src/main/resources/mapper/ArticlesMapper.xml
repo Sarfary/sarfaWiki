@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sarfa.mywiki.mapper.EbookMapper">
-  <resultMap id="BaseResultMap" type="com.sarfa.mywiki.domain.Ebook">
+<mapper namespace="com.sarfa.mywiki.mapper.ArticlesMapper">
+  <resultMap id="BaseResultMap" type="com.sarfa.mywiki.domain.Articles">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="category1_id" jdbcType="BIGINT" property="category1Id" />
     <result column="category2_id" jdbcType="BIGINT" property="category2Id" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="cover" jdbcType="VARCHAR" property="cover" />
-    <result column="doc_count" jdbcType="INTEGER" property="docCount" />
     <result column="view_count" jdbcType="INTEGER" property="viewCount" />
     <result column="vote_count" jdbcType="INTEGER" property="voteCount" />
   </resultMap>
@@ -71,16 +70,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, category1_id, category2_id, description, cover, doc_count, view_count, 
-    vote_count
+    id, `name`, category1_id, category2_id, description, cover, view_count, vote_count
   </sql>
-  <select id="selectByExample" parameterType="com.sarfa.mywiki.domain.EbookExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.sarfa.mywiki.domain.ArticlesExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from ebook
+    from articles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -91,31 +89,29 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ebook
+    from articles
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from ebook
+    delete from articles
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.sarfa.mywiki.domain.EbookExample">
-    delete from ebook
+  <delete id="deleteByExample" parameterType="com.sarfa.mywiki.domain.ArticlesExample">
+    delete from articles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.sarfa.mywiki.domain.Ebook">
-    insert into ebook (id, `name`, category1_id,
-      category2_id, description, cover,
-      doc_count, view_count, vote_count
-      )
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{category1Id,jdbcType=BIGINT},
-      #{category2Id,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR}, #{cover,jdbcType=VARCHAR},
-      #{docCount,jdbcType=INTEGER}, #{viewCount,jdbcType=INTEGER}, #{voteCount,jdbcType=INTEGER}
-      )
+  <insert id="insert" parameterType="com.sarfa.mywiki.domain.Articles">
+    insert into articles (id, `name`, category1_id, 
+      category2_id, description, cover, 
+      view_count, vote_count)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{category1Id,jdbcType=BIGINT}, 
+      #{category2Id,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR}, #{cover,jdbcType=VARCHAR}, 
+      #{viewCount,jdbcType=INTEGER}, #{voteCount,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.sarfa.mywiki.domain.Ebook">
-    insert into ebook
+  <insert id="insertSelective" parameterType="com.sarfa.mywiki.domain.Articles">
+    insert into articles
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -134,9 +130,6 @@
       </if>
       <if test="cover != null">
         cover,
-      </if>
-      <if test="docCount != null">
-        doc_count,
       </if>
       <if test="viewCount != null">
         view_count,
@@ -164,9 +157,6 @@
       <if test="cover != null">
         #{cover,jdbcType=VARCHAR},
       </if>
-      <if test="docCount != null">
-        #{docCount,jdbcType=INTEGER},
-      </if>
       <if test="viewCount != null">
         #{viewCount,jdbcType=INTEGER},
       </if>
@@ -175,14 +165,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.sarfa.mywiki.domain.EbookExample" resultType="java.lang.Long">
-    select count(*) from ebook
+  <select id="countByExample" parameterType="com.sarfa.mywiki.domain.ArticlesExample" resultType="java.lang.Long">
+    select count(*) from articles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update ebook
+    update articles
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -202,9 +192,6 @@
       <if test="record.cover != null">
         cover = #{record.cover,jdbcType=VARCHAR},
       </if>
-      <if test="record.docCount != null">
-        doc_count = #{record.docCount,jdbcType=INTEGER},
-      </if>
       <if test="record.viewCount != null">
         view_count = #{record.viewCount,jdbcType=INTEGER},
       </if>
@@ -217,22 +204,21 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update ebook
+    update articles
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       category1_id = #{record.category1Id,jdbcType=BIGINT},
       category2_id = #{record.category2Id,jdbcType=BIGINT},
       description = #{record.description,jdbcType=VARCHAR},
       cover = #{record.cover,jdbcType=VARCHAR},
-      doc_count = #{record.docCount,jdbcType=INTEGER},
       view_count = #{record.viewCount,jdbcType=INTEGER},
       vote_count = #{record.voteCount,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.sarfa.mywiki.domain.Ebook">
-    update ebook
+  <update id="updateByPrimaryKeySelective" parameterType="com.sarfa.mywiki.domain.Articles">
+    update articles
     <set>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
@@ -249,9 +235,6 @@
       <if test="cover != null">
         cover = #{cover,jdbcType=VARCHAR},
       </if>
-      <if test="docCount != null">
-        doc_count = #{docCount,jdbcType=INTEGER},
-      </if>
       <if test="viewCount != null">
         view_count = #{viewCount,jdbcType=INTEGER},
       </if>
@@ -261,14 +244,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.sarfa.mywiki.domain.Ebook">
-    update ebook
+  <update id="updateByPrimaryKey" parameterType="com.sarfa.mywiki.domain.Articles">
+    update articles
     set `name` = #{name,jdbcType=VARCHAR},
       category1_id = #{category1Id,jdbcType=BIGINT},
       category2_id = #{category2Id,jdbcType=BIGINT},
       description = #{description,jdbcType=VARCHAR},
       cover = #{cover,jdbcType=VARCHAR},
-      doc_count = #{docCount,jdbcType=INTEGER},
       view_count = #{viewCount,jdbcType=INTEGER},
       vote_count = #{voteCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

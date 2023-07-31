@@ -5,7 +5,7 @@
         <a href="/">首页</a>
       </a-breadcrumb-item>
       <a-breadcrumb-item>
-        <router-link to="/admin/ebooks">电子书管理</router-link>
+        <router-link to="/admin/articless">电子书管理</router-link>
       </a-breadcrumb-item>
     </a-breadcrumb>
     <a-layout-content style="padding: 24px 0; background: #fff">
@@ -30,7 +30,7 @@
 
       <a-table
           :columns="columns"
-          :data-source="ebooks"
+          :data-source="articless"
           row-key="id"
           :pagination="pagination"
           :loading="loading"
@@ -49,15 +49,12 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-            <router-link :to="'/admin/doc?ebookId=' + record.id">
-              <a-button type="primary" block>文档管理</a-button>
-            </router-link>
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
-                title="Are you sure delete this ebook?"
+                title="Are you sure delete this articles?"
                 ok-text="Yes"
                 cancel-text="No"
-                @confirm="DeleteEbook(record.id)"
+                @confirm="showDeleteConfirm(record.id,record.name)"
             >
               <a-button type="primary" danger >删除</a-button>
 
@@ -71,7 +68,7 @@
 
   <a-modal v-model:open="open" title="电子书" :confirm-loading="confirmLoading" @ok="handleOk">
     <a-form
-        :model="ebook"
+        :model="articles"
         name="basic"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }"
@@ -79,11 +76,11 @@
     >
       <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
       <a-form-item label=封面>
-        <a-input v-model:value="ebook.cover"/>
+        <a-input v-model:value="articles.cover"/>
       </a-form-item>
 
       <a-form-item label=名称>
-        <a-input v-model:value="ebook.name"/>
+        <a-input v-model:value="articles.name"/>
       </a-form-item>
 
 
@@ -97,7 +94,7 @@
       </a-form-item>
 
       <a-form-item label=描述>
-        <a-input v-model:value="ebook.description"/>
+        <a-input v-model:value="articles.description"/>
       </a-form-item>
 
     </a-form>
@@ -105,16 +102,17 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import {createVNode, defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
-import {message} from "ant-design-vue";
+import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
+import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 
 export default defineComponent({
-  name: 'AdminEbook',
+  name: 'AdminArticles',
   setup() {
-    const ebooks = ref();
-    const ebook = ref();
+    const articless = ref();
+    const articles = ref();
     const keyword = ref();
     const pagination = ref({
       current: 1,
@@ -127,7 +125,7 @@ export default defineComponent({
         title: '封面',
         dataIndex: 'cover',
         slots: {customRender: 'cover'},
-        width:'150px'
+        width:'200px'
       },
       {
         title: '名称',
@@ -147,19 +145,14 @@ export default defineComponent({
         width:'200px'
       },
       {
-        title: '文档数',
-        dataIndex: 'docCount',
-        width:'150px'
-      },
-      {
         title: '阅读数',
         dataIndex: 'viewCount',
-        width:'150px'
+        width:'200px'
       },
       {
         title: '点赞数',
         dataIndex: 'voteCount',
-        width:'150px'
+        width:'200px'
       },
       {
         title: 'Action',
@@ -175,15 +168,15 @@ export default defineComponent({
     let categorys:any;
     const edit = (record: any) => {
       open.value = true;
-      ebook.value = Tool.copy(record);
-      categoryId.value = [getCategoryName(ebook.value.category1Id),getCategoryName(ebook.value.category2Id)];
+      articles.value = Tool.copy(record);
+      categoryId.value = [getCategoryName(articles.value.category1Id),getCategoryName(articles.value.category2Id)];
       if(categoryId.value[0] === ''){
         categoryId.value = [];
       }
     };
     const add = () => {
       open.value = true;
-      ebook.value = {};
+      articles.value = {};
       categoryId.value = [];
     }
     const search = ()=> {
@@ -200,12 +193,12 @@ export default defineComponent({
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
-      axios.get("/ebook/list", {
+      axios.get("/articles/list", {
         params:params
       }).then((response) => {
         loading.value = false;
         const data = response.data;
-        ebooks.value = data.content.list;
+        articless.value = data.content.list;
         //
         //重置分页按钮
         pagination.value.current = params.page;
@@ -218,7 +211,7 @@ export default defineComponent({
         size: pagination.pageSize
       });
     };
-    const QueryCategorysAndEbooks = () => {
+    const QueryCategorysAndArticless = () => {
       axios.get("/category/list").then(
           (response) => {
             const data = response.data;
@@ -234,9 +227,9 @@ export default defineComponent({
     }
     const handleOk = () => {
       confirmLoading.value = true;
-      ebook.value.category1Id = getCategoryId(categoryId.value[0]);
-      ebook.value.category2Id = getCategoryId(categoryId.value[1]);
-      axios.post("/ebook/save", ebook.value).then(
+      articles.value.category1Id = getCategoryId(categoryId.value[0]);
+      articles.value.category2Id = getCategoryId(categoryId.value[1]);
+      axios.post("/articles/save", articles.value).then(
           (response) => {
             const data = response.data;
             if (data.success) {
@@ -280,8 +273,23 @@ export default defineComponent({
       }
       else return result;
     }
-    const DeleteEbook = (id: number) => {
-      axios.delete("/ebook/delete/" + id).then((response) => {
+
+    const showDeleteConfirm = (id:number,name:string) => {
+      Modal.confirm({
+        title: 'Are you sure delete this article?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: name,
+        okText: 'Yes',
+        okType: 'danger',
+        cancelText: 'No',
+        onOk() {
+          DeleteArticles(id);
+        },
+      });
+    };
+
+    const DeleteArticles = (id: number) => {
+      axios.delete("/articles/delete/" + id).then((response) => {
         const data = response.data;
         if (data.success) {
           //重新加载页面
@@ -294,17 +302,17 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      QueryCategorysAndEbooks();
+      QueryCategorysAndArticless();
     })
 
     return {
-      ebooks,
+      articless,
       pagination,
       columns,
       loading,
       confirmLoading,
       open,
-      ebook,
+      articles,
       keyword,
       categoryId,
       listCategory,
@@ -314,7 +322,7 @@ export default defineComponent({
       add,
       search,
       handleOk,
-      DeleteEbook,
+      showDeleteConfirm,
       getCategoryName
 
 

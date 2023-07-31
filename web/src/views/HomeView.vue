@@ -29,7 +29,7 @@
             <a-list item-layout="vertical"
                     size="large"
                     :grid="{ gutter: 20, column: 3 }"
-                    :data-source="ebooks"
+                    :data-source="articles"
             >
               <template #renderItem="{ item }">
                 <a-list-item key="item.name">
@@ -89,7 +89,7 @@ export default defineComponent({
       {icon: LikeOutlined, text: '156'},
       {icon: MessageOutlined, text: '2'},
     ];
-    const ebooks = ref();
+    const articles = ref();
     const listCategory = ref();
     const categorys = ref();
     const isShowPagination = ref(false);
@@ -107,14 +107,14 @@ export default defineComponent({
         }
       });
     }
-    const QueryEbooks = (parms: any) => {
-      axios.get("/ebook/list", {
+    const QueryArticless = (parms: any) => {
+      axios.get("/articles/list", {
         params: parms
       }).then(
           res => {
             const data = res.data
             if (data.success) {
-              ebooks.value = data.content.list;
+              articles.value = data.content.list;
               pagination.value.total = data.content.total;
               if (data.content.total != 0) isShowPagination.value = true;
             } else {
@@ -126,7 +126,7 @@ export default defineComponent({
     const keyPath: any = [];
     const handleListChange = (page: any) => {
       // console.log(page);
-      QueryEbooks({
+      QueryArticless({
         page: page,
         size: pagination.value.pageSize,
         category1Id: keyPath.value[0],
@@ -142,7 +142,7 @@ export default defineComponent({
         isWelcome.value = false;
         pagination.value.current = 1;
         keyPath.value = item.keyPath;
-        QueryEbooks({
+        QueryArticless({
           category1Id: keyPath.value[0],
           category2Id: keyPath.value[1],
           page: pagination.value.current,
@@ -156,7 +156,7 @@ export default defineComponent({
       QueryCategorys({});
     });
     return {
-      ebooks,
+      articles,
       pagination,
       actions,
       listCategory,

@@ -1,15 +1,14 @@
-package com.sarfa.mywiki.domain;
+package com.sarfa.mywiki.resp;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sarfa.mywiki.helper.LongJsonDeserializer;
 import com.sarfa.mywiki.helper.LongJsonSerializer;
 
-public class Ebook {
+public class ArticlesQueryResp {
     /**
      * id
      */
-
     @JsonSerialize(using = LongJsonSerializer.class)
     @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
@@ -23,8 +22,6 @@ public class Ebook {
     private String description;
 
     private String cover;
-
-    private Integer docCount;
 
     private Integer viewCount;
 
@@ -78,14 +75,6 @@ public class Ebook {
         this.cover = cover;
     }
 
-    public Integer getDocCount() {
-        return docCount;
-    }
-
-    public void setDocCount(Integer docCount) {
-        this.docCount = docCount;
-    }
-
     public Integer getViewCount() {
         return viewCount;
     }
@@ -104,20 +93,15 @@ public class Ebook {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append(", category1Id=").append(category1Id);
-        sb.append(", category2Id=").append(category2Id);
-        sb.append(", description=").append(description);
-        sb.append(", cover=").append(cover);
-        sb.append(", docCount=").append(docCount);
-        sb.append(", viewCount=").append(viewCount);
-        sb.append(", voteCount=").append(voteCount);
-        sb.append("]");
-        return sb.toString();
+        return "ArticlesQueryResp{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category1Id=" + category1Id +
+                ", category2Id=" + category2Id +
+                ", description='" + description + '\'' +
+                ", cover='" + cover + '\'' +
+                ", viewCount=" + viewCount +
+                ", voteCount=" + voteCount +
+                '}';
     }
 }

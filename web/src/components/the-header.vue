@@ -11,8 +11,8 @@
         <a-menu-item key="/">
           <router-link to="/">首页</router-link>
         </a-menu-item>
-        <a-menu-item key="/admin/ebooks">
-          <router-link to="/admin/ebooks">电子书管理</router-link>
+        <a-menu-item key="/admin/articles">
+          <router-link to="/admin/articles">电子书管理</router-link>
         </a-menu-item>
         <a-menu-item key="/admin/category">
           <router-link to="/admin/category">分类管理</router-link>

@@ -3,14 +3,14 @@ package com.sarfa.mywiki.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EbookExample {
+public class ArticlesExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public EbookExample() {
+    public ArticlesExample() {
         oredCriteria = new ArrayList<>();
     }
 
@@ -491,66 +491,6 @@ public class EbookExample {
 
         public Criteria andCoverNotBetween(String value1, String value2) {
             addCriterion("cover not between", value1, value2, "cover");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountIsNull() {
-            addCriterion("doc_count is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountIsNotNull() {
-            addCriterion("doc_count is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountEqualTo(Integer value) {
-            addCriterion("doc_count =", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountNotEqualTo(Integer value) {
-            addCriterion("doc_count <>", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountGreaterThan(Integer value) {
-            addCriterion("doc_count >", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountGreaterThanOrEqualTo(Integer value) {
-            addCriterion("doc_count >=", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountLessThan(Integer value) {
-            addCriterion("doc_count <", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountLessThanOrEqualTo(Integer value) {
-            addCriterion("doc_count <=", value, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountIn(List<Integer> values) {
-            addCriterion("doc_count in", values, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountNotIn(List<Integer> values) {
-            addCriterion("doc_count not in", values, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountBetween(Integer value1, Integer value2) {
-            addCriterion("doc_count between", value1, value2, "docCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDocCountNotBetween(Integer value1, Integer value2) {
-            addCriterion("doc_count not between", value1, value2, "docCount");
             return (Criteria) this;
         }
 
