@@ -20,7 +20,7 @@ public class ArticlesController {
 
     /**
      *
-     * @param req 分页 ，name模糊查询，分类查询
+     * @param req 分页 ，name模糊查询，分类查询, id查询
      * @return CommonResp{
      *   "success":
      *   "message":

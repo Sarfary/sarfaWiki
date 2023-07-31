@@ -34,6 +34,9 @@ public class ArticlesService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+        if(!ObjectUtils.isEmpty(req.getId())){
+            criteria.andIdEqualTo(req.getId());
+        }
         if(!ObjectUtils.isEmpty(req.getCategory1Id())){
             criteria.andCategory1IdEqualTo(req.getCategory1Id());
             criteria.andCategory2IdEqualTo(req.getCategory2Id());
