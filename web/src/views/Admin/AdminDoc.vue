@@ -1,5 +1,16 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
+    <a-breadcrumb style="margin: 16px 0">
+      <a-breadcrumb-item>
+        <a href="/">首页</a>
+      </a-breadcrumb-item>
+      <a-breadcrumb-item>
+        <router-link to="/admin/ebooks">电子书管理</router-link>
+      </a-breadcrumb-item>
+      <a-breadcrumb-item>
+        <router-link :to="'/admin/doc?ebookId=' + ebookId">文档管理</router-link>
+      </a-breadcrumb-item>
+    </a-breadcrumb>
     <a-layout-content style="padding: 24px 0; background: #fff">
       <div class="addAndSearch">
         <a-button type="primary" @click="add" style="margin-left:20px ">
@@ -19,6 +30,9 @@
       >
         <template v-slot:action="{ text, record }">
           <a-space size="large">
+            <router-link to="/admin/editor">
+              <a-button type="primary">编辑文档</a-button>
+            </router-link>
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
                 title="Are you sure delete the documents?"
@@ -26,14 +40,14 @@
                 cancel-text="No"
                 @confirm="showDeleteConfirm(record.id)"
             >
-              <a-button danger block>删除</a-button>
+              <a-button type="primary" danger block>删除</a-button>
 
             </a-popconfirm>
 
           </a-space>
         </template>
       </a-table>
-<!--      <md-editor v-model="text"></md-editor>-->
+
     </a-layout-content>
   </a-layout>
 
@@ -78,15 +92,11 @@ import {Tool} from "@/util/tool";
 import { useRoute } from 'vue-router';
 import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import E from "wangeditor";
-import {MdEditor} from "md-editor-v3";
-import "md-editor-v3/lib/style.css";
+
+
 
 export default defineComponent({
   name: 'AdminDoc',
-  components:{
-    // MdEditor,
-  },
   setup() {
     const route = useRoute();
     const docs = ref();
@@ -95,6 +105,7 @@ export default defineComponent({
     const listDoc = ref();
     const firstList = ref();
     const treeSelectData = ref();
+    const ebookId = route.query.ebookId;
     const text = ref();
     treeSelectData.value = [];
     const columns = [
@@ -264,6 +275,7 @@ export default defineComponent({
     })
 
     return {
+      ebookId,
       docs,
       listDoc,
       columns,

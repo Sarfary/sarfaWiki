@@ -1,5 +1,13 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
+    <a-breadcrumb style="margin: 16px 0">
+      <a-breadcrumb-item>
+        <a href="/">首页</a>
+      </a-breadcrumb-item>
+      <a-breadcrumb-item>
+        <router-link to="/admin/ebooks">电子书管理</router-link>
+      </a-breadcrumb-item>
+    </a-breadcrumb>
     <a-layout-content style="padding: 24px 0; background: #fff">
       <div class="addAndSearch">
         <a-button type="primary" @click="add" style="margin-left:20px ">
