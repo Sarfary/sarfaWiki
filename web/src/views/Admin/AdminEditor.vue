@@ -1,19 +1,11 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
-    <a-breadcrumb style="margin: 10px 0">
-      <a-breadcrumb-item>
-        <a href="/">首页</a>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>
-        <router-link to="/admin/articles">电子书管理</router-link>
-      </a-breadcrumb-item>
-    </a-breadcrumb>
-    <a-row style="padding-bottom: 10px">
+    <a-row style="margin: 10px 0">
       <a-col :span="22">
-        <a-input v-model:value="articleName" placeholder="请输入" ></a-input>
+        <a-input v-model:value="articleName" placeholder="请输入文章标题" ></a-input>
       </a-col>
       <a-col :span="2">
-        <a-button  :style="{float: 'right',width:'120px'}" @click="edit">修改文章</a-button>
+        <a-button  :style="{float: 'right',width:'120px'}" @click="edit">{{buttonStatus}}</a-button>
       </a-col>
     </a-row>
     <md-editor v-model="text" class="AdminEditor" ref="md" ></md-editor>
@@ -74,13 +66,21 @@ export default defineComponent({
     const route = useRoute();
     const articleId = ref();
     const articleName = ref();
+    const buttonStatus =ref();
 
     const edit = () => {
       open.value = true;
-      categoryId.value = [getCategoryName(articles.value.category1Id),getCategoryName(articles.value.category2Id)];
-      if(categoryId.value[0] === ''){
+      if(Tool.isNotEmpty(articleId.value)){
+        categoryId.value = [getCategoryName(articles.value.category1Id),getCategoryName(articles.value.category2Id)];
+        if(categoryId.value[0] === ''){
+          categoryId.value = [];
+        }
+      }
+      else {
+        articles.value = {};
         categoryId.value = [];
       }
+
     }
 
     const handleOk = () => {
@@ -159,7 +159,6 @@ export default defineComponent({
     const getCategoryId = (name:string)=>{
       let result = "";
       categorys.forEach((item:any)=>{
-        console.log()
         if(item.name === name){
           result = item.id;
         }
@@ -171,9 +170,15 @@ export default defineComponent({
       else return result;
     }
     onMounted(() => {
-      articleId.value = route.query.articlesId;
-      handleQueryArticles();
-      handleQueryContent();
+      if(Tool.isNotEmpty(route.query)){
+        buttonStatus.value = "修改文章"
+        articleId.value = route.query.articlesId;
+        handleQueryArticles();
+        handleQueryContent();
+      }
+      else {
+        buttonStatus.value = "发布文章"
+      }
       handleQueryCategory();
     })
 
@@ -185,6 +190,7 @@ export default defineComponent({
       categoryId,
       listCategory,
       articleName,
+      buttonStatus,
       handleOk,
       edit
 

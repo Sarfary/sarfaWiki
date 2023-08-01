@@ -1,18 +1,13 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
-    <a-breadcrumb style="margin: 10px 0">
-      <a-breadcrumb-item>
-        <a href="/">首页</a>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>
-        <router-link to="/admin/articles">电子书管理</router-link>
-      </a-breadcrumb-item>
-    </a-breadcrumb>
     <a-layout-content style="padding: 24px 0; background: #fff">
       <div class="addAndSearch">
-        <a-button type="primary" @click="add" style="margin-left:20px ">
-          新增
-        </a-button>
+        <router-link to="/admin/editor">
+          <a-button type="primary" style="margin-left:20px ">
+            新增
+          </a-button>
+        </router-link>
+
 
         <a-form
             layout="inline"
@@ -81,7 +76,6 @@ export default defineComponent({
   name: 'AdminArticles',
   setup() {
     const articless = ref();
-    const articles = ref();
     const keyword = ref();
     const pagination = ref({
       current: 1,
@@ -132,22 +126,8 @@ export default defineComponent({
     ];
     const open = ref<boolean>(false);
     const confirmLoading = ref<boolean>(false);
-    const categoryId = ref();
     const listCategory = ref();
     let categorys:any;
-    const edit = (record: any) => {
-      open.value = true;
-      articles.value = Tool.copy(record);
-      categoryId.value = [getCategoryName(articles.value.category1Id),getCategoryName(articles.value.category2Id)];
-      if(categoryId.value[0] === ''){
-        categoryId.value = [];
-      }
-    };
-    const add = () => {
-      open.value = true;
-      articles.value = {};
-      categoryId.value = [];
-    }
     const search = ()=> {
         handleQuery(
             {
@@ -243,14 +223,10 @@ export default defineComponent({
       loading,
       confirmLoading,
       open,
-      articles,
       keyword,
-      categoryId,
       listCategory,
 
       handleTableChange,
-      edit,
-      add,
       search,
       showDeleteConfirm,
       getCategoryName
