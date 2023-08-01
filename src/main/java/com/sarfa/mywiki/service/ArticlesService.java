@@ -85,9 +85,6 @@ public class ArticlesService {
             //id不为空，是更新
             int a = articlesMapper.updateByPrimaryKey(articles);
             int b = contentMapper.updateByPrimaryKeyWithBLOBs(content);
-            if(b == 0){
-                contentMapper.insert(content);
-            }
             //显示是否执行
             // LOG.info("{}",a);
 
@@ -96,6 +93,7 @@ public class ArticlesService {
     }
     public void delete(Long id){
         articlesMapper.deleteByPrimaryKey(id);
+        contentMapper.deleteByPrimaryKey(id);
     }
 
     public String findContent(Long id){
