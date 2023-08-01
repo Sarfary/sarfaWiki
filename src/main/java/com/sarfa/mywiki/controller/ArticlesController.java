@@ -35,6 +35,14 @@ public class ArticlesController {
         objectCommonResp.setContent(list);
         return objectCommonResp;
     }
+    @GetMapping("/findContent/{id}")
+    public CommonResp<String> findContent(@PathVariable Long id){
+        CommonResp<String> objectCommonResp = new CommonResp<>();
+        String content = articlesService.findContent(id);
+        objectCommonResp.setContent(content);
+        return objectCommonResp;
+    }
+
     /**
      *
      * @param req 新增，更新的数据

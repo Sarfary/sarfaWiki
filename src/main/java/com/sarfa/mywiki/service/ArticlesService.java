@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.sarfa.mywiki.aspect.LogAspect;
 import com.sarfa.mywiki.domain.Articles;
 import com.sarfa.mywiki.domain.ArticlesExample;
+import com.sarfa.mywiki.domain.Content;
 import com.sarfa.mywiki.mapper.ArticlesMapper;
+import com.sarfa.mywiki.mapper.ContentMapper;
 import com.sarfa.mywiki.req.ArticlesQueryReq;
 import com.sarfa.mywiki.req.ArticlesSaveReq;
 import com.sarfa.mywiki.resp.ArticlesQueryResp;
@@ -27,6 +29,8 @@ public class ArticlesService {
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
     @Resource//这个是jdk自带的
     private ArticlesMapper articlesMapper;
+    @Resource
+    private ContentMapper contentMapper;
 
     public PageResp<ArticlesQueryResp> list(ArticlesQueryReq req) {
         ArticlesExample articlesExample = new ArticlesExample();
@@ -41,8 +45,10 @@ public class ArticlesService {
             criteria.andCategory1IdEqualTo(req.getCategory1Id());
             criteria.andCategory2IdEqualTo(req.getCategory2Id());
         }
+        //分页
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Articles> articlesList = articlesMapper.selectByExample(articlesExample);
+
         List<ArticlesQueryResp> list = CopyUtil.copyList(articlesList, ArticlesQueryResp.class);
         PageInfo<Articles> pageInfo = new PageInfo<>(articlesList);
         PageResp<ArticlesQueryResp> objectPageResp = new PageResp<ArticlesQueryResp>();
@@ -66,15 +72,22 @@ public class ArticlesService {
 
     public void save(ArticlesSaveReq req) {
         Articles articles = CopyUtil.copy(req, Articles.class);
+        Content content = CopyUtil.copy(req,Content.class);
         if (ObjectUtils.isEmpty(articles.getId())) {
             //id为空，是新增
             articles.setId(snowFlake.nextId());
             articles.setViewCount(0);
             articles.setVoteCount(0);
+            content.setId(articles.getId());
             articlesMapper.insert(articles);
+            contentMapper.insert(content);
         } else {
             //id不为空，是更新
             int a = articlesMapper.updateByPrimaryKey(articles);
+            int b = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if(b == 0){
+                contentMapper.insert(content);
+            }
             //显示是否执行
             // LOG.info("{}",a);
 
@@ -83,6 +96,11 @@ public class ArticlesService {
     }
     public void delete(Long id){
         articlesMapper.deleteByPrimaryKey(id);
+    }
+
+    public String findContent(Long id){
+        Content content = contentMapper.selectByPrimaryKey(id);
+        return content.getContent();
     }
 
 }

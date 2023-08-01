@@ -30,6 +30,16 @@ public class ArticlesSaveReq {
 
     private Integer voteCount;
 
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public Long getId() {
         return id;
     }
@@ -105,6 +115,7 @@ public class ArticlesSaveReq {
                 ", cover='" + cover + '\'' +
                 ", viewCount=" + viewCount +
                 ", voteCount=" + voteCount +
+                ", content='" + content + '\'' +
                 '}';
     }
 }

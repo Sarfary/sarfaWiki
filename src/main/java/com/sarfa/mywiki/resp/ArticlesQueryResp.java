@@ -27,6 +27,31 @@ public class ArticlesQueryResp {
 
     private Integer voteCount;
 
+    private String content;
+
+    @Override
+    public String toString() {
+        return "ArticlesQueryResp{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category1Id=" + category1Id +
+                ", category2Id=" + category2Id +
+                ", description='" + description + '\'' +
+                ", cover='" + cover + '\'' +
+                ", viewCount=" + viewCount +
+                ", voteCount=" + voteCount +
+                ", content='" + content + '\'' +
+                '}';
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public Long getId() {
         return id;
     }
@@ -91,17 +116,4 @@ public class ArticlesQueryResp {
         this.voteCount = voteCount;
     }
 
-    @Override
-    public String toString() {
-        return "ArticlesQueryResp{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", category1Id=" + category1Id +
-                ", category2Id=" + category2Id +
-                ", description='" + description + '\'' +
-                ", cover='" + cover + '\'' +
-                ", viewCount=" + viewCount +
-                ", voteCount=" + voteCount +
-                '}';
-    }
 }

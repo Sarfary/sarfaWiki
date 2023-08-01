@@ -1,11 +1,11 @@
 <template>
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
-    <a-breadcrumb style="margin: 16px 0">
+    <a-breadcrumb style="margin: 10px 0">
       <a-breadcrumb-item>
         <a href="/">首页</a>
       </a-breadcrumb-item>
       <a-breadcrumb-item>
-        <router-link to="/admin/articless">电子书管理</router-link>
+        <router-link to="/admin/articles">电子书管理</router-link>
       </a-breadcrumb-item>
     </a-breadcrumb>
     <a-layout-content style="padding: 24px 0; background: #fff">
@@ -49,7 +49,10 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-            <a-button type="primary" @click="edit(record)">编辑</a-button>
+            <router-link :to="'/admin/editor?articlesId=' + record.id">
+              <a-button type="primary">编辑</a-button>
+            </router-link>
+
             <a-popconfirm
                 title="Are you sure delete this articles?"
                 ok-text="Yes"
@@ -65,40 +68,6 @@
       </a-table>
     </a-layout-content>
   </a-layout>
-
-  <a-modal v-model:open="open" title="电子书" :confirm-loading="confirmLoading" @ok="handleOk">
-    <a-form
-        :model="articles"
-        name="basic"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 18 }"
-        autocomplete="on"
-    >
-      <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
-      <a-form-item label=封面>
-        <a-input v-model:value="articles.cover"/>
-      </a-form-item>
-
-      <a-form-item label=名称>
-        <a-input v-model:value="articles.name"/>
-      </a-form-item>
-
-
-      <a-form-item label=分类>
-        <a-cascader
-            v-model:value="categoryId"
-            :options="listCategory"
-            :field-names="{label:'name' , value:'id' , children:'children'}"
-        ></a-cascader>
-
-      </a-form-item>
-
-      <a-form-item label=描述>
-        <a-input v-model:value="articles.description"/>
-      </a-form-item>
-
-    </a-form>
-  </a-modal>
 </template>
 
 <script lang="ts">
@@ -225,30 +194,6 @@ export default defineComponent({
           }
       )
     }
-    const handleOk = () => {
-      confirmLoading.value = true;
-      articles.value.category1Id = getCategoryId(categoryId.value[0]);
-      articles.value.category2Id = getCategoryId(categoryId.value[1]);
-      axios.post("/articles/save", articles.value).then(
-          (response) => {
-            const data = response.data;
-            if (data.success) {
-              open.value = false;
-              confirmLoading.value = false;
-              //重新加载页面
-              handleQuery({
-                name:keyword.value,
-                page: pagination.value.current,
-                size: pagination.value.pageSize
-              });
-            } else {
-              confirmLoading.value = false;
-              message.error(data.message);
-            }
-          }
-      )
-
-    };
     const getCategoryName  = (cid:number) => {
       let result = "";
       categorys.forEach((item:any)=>{
@@ -259,20 +204,6 @@ export default defineComponent({
       return result;
     }
 
-    const getCategoryId = (name:string)=>{
-      let result = "";
-      categorys.forEach((item:any)=>{
-        console.log()
-        if(item.name === name){
-          result = item.id;
-        }
-      });
-      if(result === ''){
-        //本身就是id
-        return name;
-      }
-      else return result;
-    }
 
     const showDeleteConfirm = (id:number,name:string) => {
       Modal.confirm({
@@ -321,7 +252,6 @@ export default defineComponent({
       edit,
       add,
       search,
-      handleOk,
       showDeleteConfirm,
       getCategoryName
 
