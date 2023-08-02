@@ -8,7 +8,7 @@
         <a-button  :style="{float: 'right',width:'120px'}" @click="edit">{{buttonStatus}}</a-button>
       </a-col>
     </a-row>
-    <md-editor v-model="text" class="AdminEditor" ref="md" ></md-editor>
+    <md-editor v-model="text" class="AdminEditor"></md-editor>
     <a-modal v-model:open="open" title="电子书" :confirm-loading="confirmLoading" @ok="handleOk">
       <a-form
           :model="articles"

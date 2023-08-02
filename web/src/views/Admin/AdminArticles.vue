@@ -209,6 +209,9 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         }
+        else {
+          message.error("错误！！")
+        }
       })
     }
 

@@ -29,6 +29,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'adminEditor',
     component: () => import(/* webpackChunkName: "about" */ '../views/Admin/AdminEditor.vue')
   },
+  {
+    path: '/articleView',
+    name: 'articleView',
+    component: () => import(/* webpackChunkName: "about" */ '../views/ArticleView.vue')
+  },
 
 
 ]
