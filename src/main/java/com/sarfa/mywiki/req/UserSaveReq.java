@@ -1,11 +1,18 @@
 package com.sarfa.mywiki.req;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.sarfa.mywiki.helper.LongJsonDeserializer;
+import com.sarfa.mywiki.helper.LongJsonSerializer;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class UserSaveReq {
-    private Long id;
 
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long id;
 
     @NotNull(message = "[用户名]不能为空")
     private String loginName;
@@ -14,7 +21,7 @@ public class UserSaveReq {
     private String name;
 
     @NotNull(message = "[密码]不能为空")
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d).{6,20}$\n", message = "[密码] 必须包含数字和英文，且长度6-20位")
+    @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,32}$", message = "[密码]至少包含 数字和英文，长度6-32")
     private String password;
 
     public Long getId() {

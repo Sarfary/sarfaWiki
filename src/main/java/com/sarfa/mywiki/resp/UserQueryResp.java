@@ -1,6 +1,13 @@
 package com.sarfa.mywiki.resp;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.sarfa.mywiki.helper.LongJsonDeserializer;
+import com.sarfa.mywiki.helper.LongJsonSerializer;
+
 public class UserQueryResp {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     private String loginName;
