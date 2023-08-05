@@ -2,9 +2,7 @@
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
     <a-layout-content style="padding: 24px 0; background: #fff">
       <div class="addAndSearch">
-          <a-button type="primary" style="margin-left:20px " @click="add">
-            新增
-          </a-button>
+          <a-button type="primary" style="margin-left:20px " @click="add">新增</a-button>
         <a-form
             layout="inline"
             :model="keyword"

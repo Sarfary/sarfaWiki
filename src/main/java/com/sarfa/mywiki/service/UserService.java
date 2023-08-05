@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.sarfa.mywiki.aspect.LogAspect;
 import com.sarfa.mywiki.domain.User;
 import com.sarfa.mywiki.domain.UserExample;
+import com.sarfa.mywiki.exception.BusinessException;
+import com.sarfa.mywiki.exception.BusinessExceptionCode;
 import com.sarfa.mywiki.mapper.UserMapper;
 import com.sarfa.mywiki.req.UserQueryReq;
 import com.sarfa.mywiki.req.UserSaveReq;
@@ -56,8 +58,16 @@ public class UserService {
         User user = CopyUtil.copy(req, User.class);
         if (ObjectUtils.isEmpty(user.getId())) {
             //id为空，是新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
+            //首先查看该loginName是否存在
+            if(ObjectUtils.isEmpty(selectByLoginName(user.getLoginName()))){
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            }
+            else {
+                //用户名已存在
+               throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
+
 
         } else {
             //id不为空，是更新
@@ -71,6 +81,20 @@ public class UserService {
     public void delete(Long id){
         userMapper.deleteByPrimaryKey(id);
     }
+
+    public User selectByLoginName(String loginName){
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if(userList.isEmpty()){
+            return null;
+        }
+        else{
+            return userList.get(0);
+        }
+    }
+
 
 
 }
