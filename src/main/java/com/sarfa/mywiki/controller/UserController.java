@@ -2,10 +2,11 @@ package com.sarfa.mywiki.controller;
 
 import com.sarfa.mywiki.req.UserQueryReq;
 import com.sarfa.mywiki.req.UserSaveReq;
-import com.sarfa.mywiki.resp.UserQueryResp;
 import com.sarfa.mywiki.resp.CommonResp;
 import com.sarfa.mywiki.resp.PageResp;
+import com.sarfa.mywiki.resp.UserQueryResp;
 import com.sarfa.mywiki.service.UserService;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,6 +43,7 @@ public class UserController {
      */
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody UserSaveReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp objectCommonResp = new CommonResp<>();
         userService.save(req);
         return objectCommonResp;

@@ -77,7 +77,9 @@ import axios from 'axios';
 import {message, Modal} from "ant-design-vue";
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import {Tool} from "@/util/tool";
-
+//告诉编译器这两个已经存在与全局引用中了
+declare let hexMd5:any;
+declare let KEY:any;
 export default defineComponent({
   name: 'AdminUser',
   setup() {
@@ -131,13 +133,15 @@ export default defineComponent({
             }
         )
     }
+
     const handleOk = () => {
       confirmLoading.value = true;
+      user.value.password = hexMd5(user.value.password + KEY);
       axios.post("/user/save", {
         id:user.value.id,
         loginName:user.value.loginName,
         name:user.value.name,
-        password:user.value.password
+        password: user.value.password
       }).then(
           (response) => {
             const data = response.data;
@@ -235,6 +239,8 @@ export default defineComponent({
 
   }
 });
+
+
 </script>
 
 <style scoped>
