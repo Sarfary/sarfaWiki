@@ -2,7 +2,7 @@
   <a-layout :style="{padding: '0 50px',minHeight: '280px'}">
     <a-layout-content style="padding: 24px 0; background: #fff">
       <div class="addAndSearch">
-          <a-button type="primary" style="margin-left:20px " @click="add">新增</a-button>
+        <a-button type="primary" style="margin-left:20px " @click="add">新增</a-button>
         <a-form
             layout="inline"
             :model="keyword"
@@ -28,15 +28,15 @@
 
         <template v-slot:action="{ text, record }">
           <a-space size="middle">
-              <a-button type="primary" @click="edit(record)">编辑</a-button>
-
+            <a-button type="primary" @click="resetPassword(record)">重置密码</a-button>
+            <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
                 title="Are you sure delete this user?"
                 ok-text="Yes"
                 cancel-text="No"
                 @confirm="showDeleteConfirm(record.id,record.loginName)"
             >
-              <a-button type="primary" danger >删除</a-button>
+              <a-button type="primary" danger>删除</a-button>
 
             </a-popconfirm>
 
@@ -67,6 +67,21 @@
 
         </a-form>
       </a-modal>
+
+      <a-modal v-model:open="resetOpen" title="重置密码" :confirm-loading="resetConfirmLoading" @ok="handleResetOk">
+        <a-form
+            :model="user"
+            name="basic"
+            :label-col="{ span: 4 }"
+            :wrapper-col="{ span: 18 }"
+            autocomplete="on"
+        >
+          <a-form-item label=新密码 :style="{marginTop:'20px'}">
+            <a-input v-model:value="user.password"/>
+          </a-form-item>
+
+        </a-form>
+      </a-modal>
     </a-layout-content>
   </a-layout>
 </template>
@@ -78,8 +93,8 @@ import {message, Modal} from "ant-design-vue";
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import {Tool} from "@/util/tool";
 //告诉编译器这两个已经存在与全局引用中了
-declare let hexMd5:any;
-declare let KEY:any;
+declare let hexMd5: any;
+declare let KEY: any;
 export default defineComponent({
   name: 'AdminUser',
   setup() {
@@ -109,7 +124,7 @@ export default defineComponent({
       {
         title: 'Action',
         key: 'action',
-        width:'400px',
+        width: '400px',
         slots: {customRender: 'action'}
       }
     ];
@@ -120,27 +135,27 @@ export default defineComponent({
       open.value = true;
       user.value = {};
     }
-    const edit = (record:any) => {
+    const edit = (record: any) => {
       open.value = true;
       user.value = Tool.copy(record);
     }
-    const search = ()=> {
-        handleQuery(
-            {
-              loginName:keyword.value,
-              page: 1,
-              size: pagination.value.pageSize
-            }
-        )
+    const search = () => {
+      handleQuery(
+          {
+            loginName: keyword.value,
+            page: 1,
+            size: pagination.value.pageSize
+          }
+      )
     }
 
     const handleOk = () => {
       confirmLoading.value = true;
       user.value.password = hexMd5(user.value.password + KEY);
       axios.post("/user/save", {
-        id:user.value.id,
-        loginName:user.value.loginName,
-        name:user.value.name,
+        id: user.value.id,
+        loginName: user.value.loginName,
+        name: user.value.name,
         password: user.value.password
       }).then(
           (response) => {
@@ -160,12 +175,41 @@ export default defineComponent({
           }
       )
     }
-
+    const resetOpen = ref<boolean>(false);
+    const resetConfirmLoading = ref<boolean>(false);
+    const resetPassword = (record:any) => {
+      resetOpen.value = true;
+      user.value = Tool.copy(record);
+      user.value.password = null;
+    }
+    const handleResetOk = () => {
+      resetConfirmLoading.value = true;
+      user.value.password = hexMd5(user.value.password + KEY);
+      axios.post("/user/resetPassword", {
+        id: user.value.id,
+        password: user.value.password
+      }).then(
+          (response) => {
+            const data = response.data;
+            resetConfirmLoading.value = false;
+            if (data.success) {
+              resetOpen.value = false;
+              //重新加载页面
+              handleQuery({
+                page: pagination.value.current,
+                size: pagination.value.pageSize
+              });
+            } else {
+              message.error(data.message);
+            }
+          }
+      )
+    }
     // 数据查询
     const handleQuery = (params: any) => {
       loading.value = true;
       axios.get("/user/list", {
-        params:params
+        params: params
       }).then((response) => {
         loading.value = false;
         const data = response.data;
@@ -183,7 +227,7 @@ export default defineComponent({
       });
     };
 
-    const showDeleteConfirm = (id:number,loginName:string) => {
+    const showDeleteConfirm = (id: number, loginName: string) => {
       Modal.confirm({
         title: 'Are you sure delete this user?',
         icon: createVNode(ExclamationCircleOutlined),
@@ -206,8 +250,7 @@ export default defineComponent({
             page: 1,
             size: pagination.value.pageSize
           });
-        }
-        else {
+        } else {
           message.error("错误！！")
         }
       })
@@ -229,12 +272,18 @@ export default defineComponent({
       open,
       keyword,
       user,
+      resetConfirmLoading,
+      resetOpen,
+
       add,
       edit,
       handleOk,
+      resetPassword,
+      handleResetOk,
       handleTableChange,
       search,
-      showDeleteConfirm
+      showDeleteConfirm,
+
     }
 
   }
@@ -244,9 +293,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.addAndSearch{
+.addAndSearch {
   margin-bottom: 20px;
 }
+
 .searchKeyword {
   display: flex;
   float: right;

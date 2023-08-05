@@ -1,6 +1,7 @@
 package com.sarfa.mywiki.controller;
 
 import com.sarfa.mywiki.req.UserQueryReq;
+import com.sarfa.mywiki.req.UserResetPasswordReq;
 import com.sarfa.mywiki.req.UserSaveReq;
 import com.sarfa.mywiki.resp.CommonResp;
 import com.sarfa.mywiki.resp.PageResp;
@@ -46,6 +47,14 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp objectCommonResp = new CommonResp<>();
         userService.save(req);
+        return objectCommonResp;
+
+    }
+    @PostMapping("/resetPassword")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp objectCommonResp = new CommonResp<>();
+        userService.resetPassword(req);
         return objectCommonResp;
 
     }

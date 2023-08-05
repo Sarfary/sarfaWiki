@@ -9,6 +9,7 @@ import com.sarfa.mywiki.exception.BusinessException;
 import com.sarfa.mywiki.exception.BusinessExceptionCode;
 import com.sarfa.mywiki.mapper.UserMapper;
 import com.sarfa.mywiki.req.UserQueryReq;
+import com.sarfa.mywiki.req.UserResetPasswordReq;
 import com.sarfa.mywiki.req.UserSaveReq;
 import com.sarfa.mywiki.resp.UserQueryResp;
 import com.sarfa.mywiki.resp.PageResp;
@@ -81,6 +82,12 @@ public class UserService {
 
         }
 
+    }
+
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        //有selective,表示如果一个属性为空就不更新这个属性
+        int a = userMapper.updateByPrimaryKeySelective(user);
     }
     public void delete(Long id){
         userMapper.deleteByPrimaryKey(id);
