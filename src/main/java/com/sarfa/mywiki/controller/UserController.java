@@ -1,10 +1,12 @@
 package com.sarfa.mywiki.controller;
 
+import com.sarfa.mywiki.req.UserLoginReq;
 import com.sarfa.mywiki.req.UserQueryReq;
 import com.sarfa.mywiki.req.UserResetPasswordReq;
 import com.sarfa.mywiki.req.UserSaveReq;
 import com.sarfa.mywiki.resp.CommonResp;
 import com.sarfa.mywiki.resp.PageResp;
+import com.sarfa.mywiki.resp.UserLoginResp;
 import com.sarfa.mywiki.resp.UserQueryResp;
 import com.sarfa.mywiki.service.UserService;
 import org.springframework.util.DigestUtils;
@@ -50,13 +52,32 @@ public class UserController {
         return objectCommonResp;
 
     }
+
+    /**
+     *
+     * @param req 重置密码
+     * @return
+     */
     @PostMapping("/resetPassword")
     public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp objectCommonResp = new CommonResp<>();
         userService.resetPassword(req);
         return objectCommonResp;
+    }
 
+    /**
+     *
+     * @param req 登录
+     * @return
+     */
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> objectCommonResp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        objectCommonResp.setContent(userLoginResp);
+        return objectCommonResp;
     }
     /**
      *

@@ -8,9 +8,11 @@ import com.sarfa.mywiki.domain.UserExample;
 import com.sarfa.mywiki.exception.BusinessException;
 import com.sarfa.mywiki.exception.BusinessExceptionCode;
 import com.sarfa.mywiki.mapper.UserMapper;
+import com.sarfa.mywiki.req.UserLoginReq;
 import com.sarfa.mywiki.req.UserQueryReq;
 import com.sarfa.mywiki.req.UserResetPasswordReq;
 import com.sarfa.mywiki.req.UserSaveReq;
+import com.sarfa.mywiki.resp.UserLoginResp;
 import com.sarfa.mywiki.resp.UserQueryResp;
 import com.sarfa.mywiki.resp.PageResp;
 import com.sarfa.mywiki.util.CopyUtil;
@@ -92,6 +94,28 @@ public class UserService {
     public void delete(Long id){
         userMapper.deleteByPrimaryKey(id);
     }
+
+    //登录
+    public UserLoginResp login(UserLoginReq req){
+        User user = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(user)){
+            //用户名不存在
+            LOG.info("用户名{}不存在",req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }
+        else {
+            if(user.getPassword().equals(req.getPassword())){
+                //密码正确
+                return CopyUtil.copy(user,UserLoginResp.class);
+            }
+            else {
+                //密码错误
+                LOG.info("{}登录密码输入错误，输入密码{}，数据库密码{}",req.getLoginName(),req.getPassword(),user.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+    }
+
 
     public User selectByLoginName(String loginName){
         UserExample userExample = new UserExample();
