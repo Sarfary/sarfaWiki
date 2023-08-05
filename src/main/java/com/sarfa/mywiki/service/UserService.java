@@ -71,7 +71,10 @@ public class UserService {
 
         } else {
             //id不为空，是更新
-            int a = userMapper.updateByPrimaryKey(user);
+            //不能更新用户名
+            user.setLoginName(null);
+            //有selective,表示如果一个属性为空就不更新这个属性
+            int a = userMapper.updateByPrimaryKeySelective(user);
             //显示是否执行
             // LOG.info("{}",a);
 

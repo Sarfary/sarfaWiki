@@ -44,7 +44,7 @@
         </template>
       </a-table>
 
-      <a-modal v-model:open="open" title="分类" :confirm-loading="confirmLoading" @ok="handleOk">
+      <a-modal v-model:open="open" title="用户" :confirm-loading="confirmLoading" @ok="handleOk">
         <a-form
             :model="user"
             name="basic"
@@ -54,7 +54,7 @@
         >
           <!--:rules="[{ required: true, message: 'Please input your username!' }]"-->
           <a-form-item label=用户名>
-            <a-input v-model:value="user.loginName"/>
+            <a-input v-model:value="user.loginName" :disabled="!!user.id"/>
           </a-form-item>
 
           <a-form-item label=昵称>
