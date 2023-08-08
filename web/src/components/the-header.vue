@@ -2,9 +2,19 @@
   <a-layout id="the-header-style">
     <a-layout-header class="header">
       <div class="logo"/>
-      <a :style="{float:'right', color:'#bbb'}" >
+      <a :style="{float:'right', color:'#bbb'}">
         <div class="loginLogo" v-if="!userShow.id" @click="login">登录</div>
-        <div class="loginLogo" v-else>{{userShow.name}}</div>
+        <a-dropdown placement="bottom" arrow  :trigger="['click']">
+          <div class="loginLogo" v-if="!!userShow.id">{{ userShow.name }}</div>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item @click="logout">
+                  <logout-outlined/>退出登录
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+
       </a>
       <a-menu
           theme="dark"
@@ -66,57 +76,79 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, computed} from 'vue';
-import {UserOutlined, LockOutlined} from "@ant-design/icons-vue"
-import {message} from "ant-design-vue";
+import {defineComponent, ref, computed,createVNode} from 'vue';
+import {UserOutlined, LockOutlined, LogoutOutlined, } from "@ant-design/icons-vue"
+import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import axios from "axios";
 import store from "@/store";
+
 declare let hexMd5: any;
 declare let KEY: any;
 
 export default defineComponent({
   name: 'the-header',
-  components:{
+  components: {
     UserOutlined,
     LockOutlined,
+    LogoutOutlined,
   },
   setup() {
     const loginOpen = ref(false);
     const loginConfirmLoading = ref(false);
     const user = ref();
-    const userShow = computed(()=>store.state.user);
-    const isLogin = ref(false);
+    const userShow = computed(() => store.state.user);
     const handleLoginOk = () => {
       console.log("login");
       loginConfirmLoading.value = true;
-      const loginUser:any = {};
+      const loginUser: any = {};
       loginUser.value = Tool.copy(user.value);
       loginUser.value.password = hexMd5(loginUser.value.password + KEY);
       axios.post("/user/login", {
         loginName: loginUser.value.loginName,
         password: loginUser.value.password
-      }).then((response)=>{
+      }).then((response) => {
         const data = response.data;
         console.log(data);
         loginConfirmLoading.value = false;
-        if(data.success){
+        if (data.success) {
           loginOpen.value = false;
           message.success("登录成功");
-          store.commit("setUser",data.content);
-        }
-        else {
+          store.commit("setUser", data.content);
+        } else {
           message.error(data.message);
         }
       })
 
     }
+    const handleLogoutOk = () => {
+      axios.get("/user/logout/"+ userShow.value.token).then((response)=>{
+        const data = response.data;
+        if(data.success){
+          store.commit("setUser",{});
+        }
+      })
+    }
     const login = () => {
       user.value = {
-        loginName:'sarfa',
-        password:'root1234'
+        loginName: 'sarfa',
+        password: 'root1234'
       };
       loginOpen.value = true;
+    }
+    const logout = () => {
+      Modal.confirm({
+        title: "系统提示",
+        icon: createVNode(LogoutOutlined),
+        content:'确定注销并退出登录吗？',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        width:'300px',
+        onOk() {
+          handleLogoutOk();
+        },
+      });
     }
 
     return {
@@ -124,13 +156,13 @@ export default defineComponent({
       loginConfirmLoading,
       user,
       userShow,
-      isLogin,
       handleLoginOk,
-      login
-
+      login,
+      logout
 
       , UserOutlined
       , LockOutlined
+      ,LogoutOutlined
 
     }
   }
@@ -150,7 +182,8 @@ export default defineComponent({
   float: right;
   margin: 16px 0 16px 24px;
 }
-.loginLogo{
+
+.loginLogo {
   width: 44px;
   height: 44px;
   line-height: 44px;
@@ -160,6 +193,7 @@ export default defineComponent({
   text-align: center;
   background: rgba(255, 255, 255, 0.1);
 }
+
 /*
 .loginLogo:hover{
   transform: translateY(-2px);

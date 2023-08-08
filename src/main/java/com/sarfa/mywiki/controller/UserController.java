@@ -100,6 +100,13 @@ public class UserController {
         objectCommonResp.setContent(userLoginResp);
         return objectCommonResp;
     }
+    @GetMapping ("/logout/{token}")
+    public CommonResp delete(@PathVariable String token){
+        CommonResp objectCommonResp = new CommonResp<>();
+        redisTemplate.delete(token);
+        LOG.info("从redis中删除token：{}",token);
+        return objectCommonResp;
+    }
     /**
      *
      * @param id 根据id删除数据
