@@ -2,9 +2,9 @@
   <a-layout id="the-header-style">
     <a-layout-header class="header">
       <div class="logo"/>
-      <a :style="{float:'right', color:'#bbb'}" @click="login">
-        <div class="loginLogo" v-if="!isLogin">登录</div>
-        <div class="loginLogo" v-else>我的</div>
+      <a :style="{float:'right', color:'#bbb'}" >
+        <div class="loginLogo" v-if="!userShow.id" @click="login">登录</div>
+        <div class="loginLogo" v-else>{{userShow.name}}</div>
       </a>
       <a-menu
           theme="dark"
@@ -84,6 +84,8 @@ export default defineComponent({
     const loginOpen = ref(false);
     const loginConfirmLoading = ref(false);
     const user = ref();
+    const userShow = ref();
+    userShow.value ={};
     const isLogin = ref(false);
     const handleLoginOk = () => {
       console.log("login");
@@ -101,6 +103,7 @@ export default defineComponent({
         if(data.success){
           loginOpen.value = false;
           message.success("登录成功");
+          userShow.value =data.content;
         }
         else {
           message.error(data.message);
@@ -120,6 +123,7 @@ export default defineComponent({
       loginOpen,
       loginConfirmLoading,
       user,
+      userShow,
       isLogin,
       handleLoginOk,
       login
