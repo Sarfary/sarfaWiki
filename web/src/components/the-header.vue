@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, computed} from 'vue';
 import {UserOutlined, LockOutlined} from "@ant-design/icons-vue"
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
@@ -85,8 +85,7 @@ export default defineComponent({
     const loginOpen = ref(false);
     const loginConfirmLoading = ref(false);
     const user = ref();
-    const userShow = ref();
-    userShow.value ={};
+    const userShow = computed(()=>store.state.user);
     const isLogin = ref(false);
     const handleLoginOk = () => {
       console.log("login");
@@ -104,8 +103,7 @@ export default defineComponent({
         if(data.success){
           loginOpen.value = false;
           message.success("登录成功");
-          userShow.value =data.content;
-          store.commit("setUser",userShow.value);
+          store.commit("setUser",data.content);
         }
         else {
           message.error(data.message);
