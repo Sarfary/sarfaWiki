@@ -71,6 +71,7 @@ import {UserOutlined, LockOutlined} from "@ant-design/icons-vue"
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import axios from "axios";
+import store from "@/store";
 declare let hexMd5: any;
 declare let KEY: any;
 
@@ -104,6 +105,7 @@ export default defineComponent({
           loginOpen.value = false;
           message.success("登录成功");
           userShow.value =data.content;
+          store.commit("setUser",userShow.value);
         }
         else {
           message.error(data.message);
