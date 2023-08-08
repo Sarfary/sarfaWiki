@@ -15,8 +15,18 @@ public class UserLoginResp {
 
     private String name;
 
+    private String token;
+
     public Long getId() {
         return id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setId(Long id) {
@@ -41,10 +51,11 @@ public class UserLoginResp {
 
     @Override
     public String toString() {
-        return "UserSaveReq{" +
+        return "UserLoginResp{" +
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
                 ", name='" + name + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }
