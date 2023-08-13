@@ -109,7 +109,6 @@ export default defineComponent({
         password: loginUser.value.password
       }).then((response) => {
         const data = response.data;
-        console.log(data);
         loginConfirmLoading.value = false;
         if (data.success) {
           loginOpen.value = false;
