@@ -8,6 +8,7 @@ import com.sarfa.mywiki.domain.ArticlesExample;
 import com.sarfa.mywiki.domain.Content;
 import com.sarfa.mywiki.mapper.ArticlesMapper;
 import com.sarfa.mywiki.mapper.ContentMapper;
+import com.sarfa.mywiki.mapper.MyArticlesMapper;
 import com.sarfa.mywiki.req.ArticlesQueryReq;
 import com.sarfa.mywiki.req.ArticlesSaveReq;
 import com.sarfa.mywiki.resp.ArticlesQueryResp;
@@ -29,6 +30,8 @@ public class ArticlesService {
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
     @Resource//这个是jdk自带的
     private ArticlesMapper articlesMapper;
+    @Resource
+    private MyArticlesMapper myArticlesMapper;
     @Resource
     private ContentMapper contentMapper;
 
@@ -98,6 +101,7 @@ public class ArticlesService {
 
     public String findContent(Long id){
         Content content = contentMapper.selectByPrimaryKey(id);
+        myArticlesMapper.updataViewCount(id);
         return content.getContent();
     }
 
