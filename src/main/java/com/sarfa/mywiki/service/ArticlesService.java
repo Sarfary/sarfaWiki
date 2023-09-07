@@ -105,4 +105,12 @@ public class ArticlesService {
         return content.getContent();
     }
 
+    public ArticlesQueryResp findArticle(Long id){
+        Articles article = articlesMapper.selectByPrimaryKey(id);
+        ArticlesQueryResp articlesQueryResp = CopyUtil.copy(article, ArticlesQueryResp.class);
+
+        return articlesQueryResp;
+    }
+
+
 }

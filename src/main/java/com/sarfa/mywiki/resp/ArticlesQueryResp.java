@@ -27,7 +27,6 @@ public class ArticlesQueryResp {
 
     private Integer voteCount;
 
-    private String content;
 
     @Override
     public String toString() {
@@ -40,16 +39,7 @@ public class ArticlesQueryResp {
                 ", cover='" + cover + '\'' +
                 ", viewCount=" + viewCount +
                 ", voteCount=" + voteCount +
-                ", content='" + content + '\'' +
                 '}';
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public Long getId() {

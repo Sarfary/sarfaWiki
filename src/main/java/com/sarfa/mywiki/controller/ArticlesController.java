@@ -35,6 +35,13 @@ public class ArticlesController {
         objectCommonResp.setContent(list);
         return objectCommonResp;
     }
+    @GetMapping("/findArticle/{id}")
+    public CommonResp<ArticlesQueryResp> findArticle(@PathVariable Long id){
+        CommonResp<ArticlesQueryResp> objectCommonResp = new CommonResp<>();
+        ArticlesQueryResp articlesQueryResp = articlesService.findArticle(id);
+        objectCommonResp.setContent(articlesQueryResp);
+        return objectCommonResp;
+    }
     @GetMapping("/findContent/{id}")
     public CommonResp<String> findContent(@PathVariable Long id){
         CommonResp<String> objectCommonResp = new CommonResp<>();
